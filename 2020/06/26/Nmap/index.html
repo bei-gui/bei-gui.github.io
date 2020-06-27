@@ -1,0 +1,174 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#0078E7"><meta name="author" content="Beigui"><meta name="copyright" content="Beigui"><meta name="generator" content="Hexo 4.2.1"><meta name="theme" content="hexo-theme-yun"><title>Nmap常用命令 | beigui blog</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&amp;family=Source+Code+Pro&amp;display=swap" media="none" onload="this.media='all'"><script src="//at.alicdn.com/t/font_1140697_stqaphw3j4.js" async></script><script src="https://cdn.jsdelivr.net/npm/scrollreveal/dist/scrollreveal.min.js" defer></script><script>document.addEventListener("DOMContentLoaded", () => {
+  [".post-card",".post-content img"].forEach((target)=> {
+    ScrollReveal().reveal(target);
+  })
+});
+</script><link class="aplayer-style-marker" rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/aplayer@latest/dist/APlayer.min.css"><script class="aplayer-script-marker" src="https://cdn.jsdelivr.net/npm/aplayer@latest/dist/APlayer.min.js" defer></script><script class="meting-script-marker" src="https://cdn.jsdelivr.net/npm/meting@1/dist/Meting.min.js" defer></script><link rel="shortcut icon" type="image/svg+xml" href="/yun.svg"><link rel="mask-icon" href="/yun.svg" color="#0078E7"><link rel="alternate icon" href="/yun.ico"><link rel="preload" href="/css/hexo-theme-yun.css" as="style"><link rel="preload" href="/js/utils.js" as="script"><link rel="preload" href="/js/hexo-theme-yun.js" as="script"><link rel="prefetch" href="/js/sidebar.js" as="script"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="stylesheet" href="/css/hexo-theme-yun.css"><script id="yun-config">
+    const Yun = window.Yun || {};
+    window.CONFIG = {"root":"/","title":"北轨的小破站","version":"0.9.1","anonymous_image":"https://cdn.jsdelivr.net/gh/YunYouJun/cdn/img/avatar/none.jpg","say":{"api":"https://v1.hitokoto.cn","hitokoto":true},"fireworks":{"colors":["102, 167, 221","62, 131, 225","33, 78, 194"]}};
+  </script><meta name="description" content="官方文档 ：http:&#x2F;&#x2F;www.nmap.com.cn&#x2F; -iL : Input from list of hosts&#x2F;networks 指定输入文件，可用于指定扫描的目标 ex： -iL 192.168.0.0&#x2F;16 -iR : Choose random targets 选择随机目标 ex：-iR 200 （选定随机的200个目标） –exclude &lt;host1[,host2][,h">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Nmap常用命令">
+<meta property="og:url" content="http://yoursite.com/2020/06/26/Nmap/">
+<meta property="og:site_name" content="beigui blog">
+<meta property="og:description" content="官方文档 ：http:&#x2F;&#x2F;www.nmap.com.cn&#x2F; -iL : Input from list of hosts&#x2F;networks 指定输入文件，可用于指定扫描的目标 ex： -iL 192.168.0.0&#x2F;16 -iR : Choose random targets 选择随机目标 ex：-iR 200 （选定随机的200个目标） –exclude &lt;host1[,host2][,h">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20181227101003871.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzIxMzEwNjg5,size_16,color_FFFFFF,t_70">
+<meta property="article:published_time" content="2020-06-26T08:28:31.000Z">
+<meta property="article:modified_time" content="2020-06-26T14:00:04.852Z">
+<meta property="article:author" content="Beigui">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/20181227101003871.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzIxMzEwNjg5,size_16,color_FFFFFF,t_70"></head><body><script defer src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script defer src="/js/ui/fireworks.js"></script><canvas class="fireworks"></canvas><div class="container"><a class="sidebar-toggle hty-icon-button" id="menu-btn"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><div class="sidebar-toggle sidebar-overlay"></div><aside class="sidebar"><script defer src="/js/sidebar.js"></script><ul class="sidebar-nav"><li class="sidebar-nav-item sidebar-nav-toc hty-icon-button sidebar-nav-active" data-target="post-toc-wrap" title="文章目录"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-list-ordered"></use></svg></li><li class="sidebar-nav-item sidebar-nav-overview hty-icon-button" data-target="site-overview-wrap" title="站点概览"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-passport-line"></use></svg></li></ul><div class="sidebar-panel" id="site-overview-wrap"><div class="site-info mickey-mouse"><a class="site-author-avatar" href="/about/" title="Beigui"><img width="96" loading="lazy" src="/yun.png" alt="Beigui"></a><div class="site-author-name"><a href="/about/">Beigui</a></div><a class="site-name" href="/about/site.html">beigui blog</a><sub class="site-subtitle">Network security enthusiasts | CTFer</sub><div class="site-desciption"></div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/" title="首页"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-home-4-line"></use></svg></span></a><div class="site-state-item"><a href="/archives/" title="归档"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-archive-line"></use></svg></span><span class="site-state-item-count">4</span></a></div><div class="site-state-item"><a href="/categories/" title="分类"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-folder-2-line"></use></svg></span><span class="site-state-item-count">0</span></a></div><div class="site-state-item"><a href="/tags/" title="标签"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="site-state-item-count">0</span></a></div><a class="site-state-item hty-icon-button" href="https://yun.yunyoujun.cn" target="_blank" rel="noopener" title="文档"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-settings-line"></use></svg></span></a></nav><hr style="margin-bottom:0.5rem"><div class="links-of-author"><a class="links-of-author-item hty-icon-button" rel="noopener" href="/atom.xml" title="RSS" target="_blank" style="color:orange"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-rss-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="http://wpa.qq.com/msgrd?v=3&amp;uin=1769606485&amp;site=qq&amp;menu=yes" title="QQ" target="_blank" style="color:#12B7F5"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-qq-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://github.com/bei-gui" title="GitHub" target="_blank" style="color:#6e5494"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-github-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://music.163.com/#/user/home?id=1539583733" title="网易云音乐" target="_blank" style="color:#C20C0C"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-netease-cloud-music-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://space.bilibili.com/479406079" title="哔哩哔哩" target="_blank" style="color:#FF8EB3"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-bilibili-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="1769606485@qq.com" title="E-Mailqq.com" target="_blank" style="color:#8E71C1"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-mail-line"></use></svg></a></div><hr style="margin:0.5rem 1rem"><div class="links"><a class="links-item hty-icon-button" href="/links/" title="我的小伙伴们" style="color:dodgerblue"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-genderless-line"></use></svg></a></div></div><div class="sidebar-panel sidebar-panel-active" id="post-toc-wrap"><div class="post-toc"><div class="post-toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#HOST-DISCOVERY-主机发现"><span class="toc-number">1.</span> <span class="toc-text">HOST DISCOVERY: 主机发现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SCAN-TECHNIQUES"><span class="toc-number">2.</span> <span class="toc-text">SCAN TECHNIQUES:</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SCRIPT-SCAN-脚本扫描"><span class="toc-number">3.</span> <span class="toc-text">SCRIPT SCAN:脚本扫描</span></a></li></ol></div></div></div><div class="tag-cloud"><div class="tag-cloud-tags"></div></div></aside><main class="sidebar-translate" id="content"><div id="post"><article class="post-block" itemscope itemtype="https://schema.org/Article"><link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/06/26/Nmap/"><span hidden itemprop="author" itemscope itemtype="https://schema.org/Person"><meta itemprop="name" content="Beigui"><meta itemprop="description"></span><span hidden itemprop="publisher" itemscope itemtype="https://schema.org/Organization"><meta itemprop="name" content="beigui blog"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">Nmap常用命令</h1><div class="post-meta"><div class="post-time" style="display:inline-block"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-line"></use></svg></span> <time title="创建时间：2020-06-26 16:28:31" itemprop="dateCreated datePublished" datetime="2020-06-26T16:28:31+08:00">2020-06-26</time></div><div class="post-classify"></div><div class="post-author"><span class="author-name">北轨</span></div></div></header><section class="post-body" itemprop="articleBody"><div class="post-content post-markdown"><p>官方文档 ：<a href="http://www.nmap.com.cn/" target="_blank" rel="noopener">http://www.nmap.com.cn/</a></p>
+<p>-iL : Input from list of hosts/networks</p>
+<p><code>指定输入文件，可用于指定扫描的目标 ex： -iL 192.168.0.0/16</code></p>
+<p>-iR : Choose random targets</p>
+<p><code>选择随机目标 ex：-iR 200 （选定随机的200个目标）</code></p>
+<p>–exclude &lt;host1[,host2][,host3],…&gt;: Exclude hosts/networks</p>
+<p><code>排除主机，即扫描的时候越过该主机</code></p>
+<p>–excludefile <exclude_file>: Exclude list from file</p>
+<p><code>同上，引进黑名单 ex：–excludefile host.txt</code></p>
+<h2 id="HOST-DISCOVERY-主机发现"><a href="#HOST-DISCOVERY-主机发现" class="headerlink" title="HOST DISCOVERY: 主机发现"></a>HOST DISCOVERY: 主机发现</h2><p>-sL: List Scan - simply list targets to scan</p>
+<p><code>显示扫描主机的列表，有助于查看</code></p>
+<p>-sn: Ping Scan - disable port scan</p>
+<p><code>使用ping进行扫描，由于现有网络主机大部分防火墙拒绝icmp协议，一般无用</code></p>
+<p>-Pn: Treat all hosts as online – skip host discovery</p>
+<p><code>不进行主机发现，直接进行深层扫描，即使用此命令时，nmap认为主机在线</code></p>
+<p>-PS/PA/PU/PY[portlist]: TCP SYN/ACK, UDP or SCTP discovery to given ports</p>
+<p><code>使用四种方式探测端口</code></p>
+<p><code>-PS 端口列表用,隔开[tcp80 syn 扫描]</code><br><code>-PA 端口列表用,隔开ack扫描【默认扫描端口1-1024】</code><br><code>-PU 端口列表用,隔开[udp高端口扫描 穿越只过滤tcp的防火墙]</code></p>
+<p>-PE/PP/PM: ICMP echo, timestamp, and netmask request discovery probes</p>
+<p><code>-PE 的ICMP Echo扫描简单来说是通过向目标发送ICMP Echo数据包来探测目标主机是否存活，但由于许多主机的防火墙会禁止这些报文，所以仅仅ICMP扫描通常是不够的</code></p>
+<p><code>-PP 的ICMP time stamp时间戳扫描在大多数防火墙配置不当时可能会得到回复，可以以此方式来判断目标主机是否存活。倘若目标主机在线，该命令还会探测其开放的端口以及运行的服务</code></p>
+<p><code>-PM 的ICMP address maskPing地址掩码扫描会试图用备选的ICMP等级Ping指定主机，通常有不错的穿透防火墙的效果</code></p>
+<p>-PO[protocol list]: IP Protocol Ping</p>
+<p>“ <code>-PO ”选项进行一个IP协议ping。</code></p>
+<p><code>语法:nmap –PO 协议 目标</code></p>
+<p><code>IP协议ping用指定的协议发送一个包给目标。如果没有指定协议，默认的协议是 1 (ICMP), 2 (IGMP)和4 (IP-in-IP)</code><br>-n/-R: Never do DNS resolution/Always resolve [default: sometimes]</p>
+<p><code>选择是否进行dns解析</code></p>
+<p><code>“ -n ”参数用来说明不使用反向域名解析。</code></p>
+<p><code>语法:nmap –n 目标</code></p>
+<p><code>反向域名解析会明显的降低Nmap扫描的速度。使用“-n”选项会极大的减少扫描时，特别是当扫描大量的主机时。如果你不关心目标系统的DNS信息，更喜欢进行一个能快速产生结果的扫描时，可以使用这个选项</code></p>
+<p>–dns-servers &lt;serv1[,serv2],…&gt;: Specify custom DNS servers</p>
+<p><code>明确使用的DNS服务器</code></p>
+<p>–system-dns: Use OS’s DNS resolver</p>
+<p><code>使用主机nmap运行主机的dns</code></p>
+<p><code>选项-system-dns指示NMAP使用主机系统自带的DNS解析器,而不是其自身内部的方法</code></p>
+<p>–traceroute: Trace hop path to each host</p>
+<p><code>跟踪扫描主机的网络路线</code></p>
+<h2 id="SCAN-TECHNIQUES"><a href="#SCAN-TECHNIQUES" class="headerlink" title="SCAN TECHNIQUES:"></a>SCAN TECHNIQUES:</h2><p>-sS/sT/sA/sW/sM: TCP SYN/Connect()/ACK/Window/Maimon scans</p>
+<p><code>指定nmap的扫描方式，默认为sT</code></p>
+<p>-sU: UDP Scan</p>
+<p><code>使用UDP协议进行扫描</code></p>
+<p>-sN/sF/sX: TCP Null, FIN, and Xmas scans</p>
+<p><code>指定使用TCP Null, FIN, and Xmas scans秘密扫描方式来协助探测对方的TCP端口状态</code></p>
+<p>–scanflags : Customize TCP scan flags</p>
+<p><code>定制TCP包的flags</code></p>
+<p>-sI &lt;zombie host[:probeport]&gt;: Idle scan</p>
+<p><code>指定使用idle scan方式来扫描目标主机（前提需要找到合适的zombie host）</code></p>
+<p>-sY/sZ: SCTP INIT/COOKIE-ECHO scans</p>
+<p><code>使用SCTP INIT/COOKIE-ECHO来扫描SCTP协议端口的开放的情况</code></p>
+<p>-sO: IP protocol scan</p>
+<p><code>使用IP protocol 扫描确定目标机支持的协议类型</code></p>
+<p>-b : FTP bounce scan</p>
+<p><code>使用FTP bounce scan扫描方式</code></p>
+<p>PORT SPECIFICATION AND SCAN ORDER:<br>-p : Only scan specified ports</p>
+<p> Ex: -p22; -p1-65535; -p U:53,111,137,T:21-25,80,139,8080,S:9</p>
+<p><code>扫描指定的端口</code><br><code>实例: -p22; -p1-65535; -p U:53,111,137,T:21-25,80,139,8080,S:9（其中T代表TCP协议、U代表UDP协议、S代表SCTP协议）</code></p>
+<p>–exclude-ports : Exclude the specified ports from scanning</p>
+<p>-F: Fast mode - Scan fewer ports than the default scan</p>
+<p><code>快速模式，仅扫描TOP 100的端口</code></p>
+<p>-r: Scan ports consecutively - don’t randomize</p>
+<p><code>不进行端口随机打乱的操作（如无该参数，nmap会将要扫描的端口以随机顺序方式扫描，以让nmap的扫描不易被对方防火墙检测到）</code></p>
+<p>–top-ports : Scan most common ports</p>
+<p><code>扫描开放概率最高的number个端口（nmap的作者曾经做过大规模地互联网扫描，以此统计出网络上各种端口可能开放的概率。以此排列出最有可能开放端口的列表，具体可以参见文件：nmap-services。默认情况下，nmap会扫描最有可能的1000个TCP端口）</code></p>
+<p>–port-ratio : Scan ports more common than</p>
+<p><code>扫描指定频率以上的端口。与上述–top-ports类似，这里以概率作为参数，让概率大于–port-ratio的端口才被扫描。显然参数必须在在0到1之间，具体范围概率情况可以查看nmap-services文件</code></p>
+<p>SERVICE/VERSION DETECTION: 网络主机服务版本探测<br>-sV: Probe open ports to determine service/version info</p>
+<p><code>指定让Nmap进行版本侦测</code></p>
+<p>–version-intensity : Set from 0 (light) to 9 (try all probes)</p>
+<p><code>指定版本侦测强度（0-9），默认为7。数值越高，探测出的服务越准确，但是运行时间会比较长。</code></p>
+<p>–version-light: Limit to most likely probes (intensity 2)</p>
+<p><code>指定使用轻量侦测方式 (intensity 2)</code></p>
+<p>–version-all: Try every single probe (intensity 9)</p>
+<p><code>尝试使用所有的probes进行侦测 (intensity 9)</code></p>
+<p>–version-trace: Show detailed version scan activity (for debugging)</p>
+<p><code>显示出详细的版本侦测过程信息。</code></p>
+<h2 id="SCRIPT-SCAN-脚本扫描"><a href="#SCRIPT-SCAN-脚本扫描" class="headerlink" title="SCRIPT SCAN:脚本扫描"></a>SCRIPT SCAN:脚本扫描</h2><p>-sC: equivalent to –script=default</p>
+<p><code>指定script脚本为默认值</code></p>
+<p>–script=: is a comma separated list of<br> directories, script-files or script-categories</p>
+<p><code>使用某个或某类脚本进行扫描，支持通配符描述</code></p>
+<p>–script-args=&lt;n1=v1,[n2=v2,…]&gt;: provide arguments to scripts</p>
+<p><code>为脚本提供默认参数</code></p>
+<p>–script-args-file=filename: provide NSE script args in a file</p>
+<p><code>使用文件来为脚本提供参数</code></p>
+<p>–script-trace: Show all data sent and received</p>
+<p><code>显示脚本执行过程中发送与接收的数据</code></p>
+<p>–script-updatedb: Update the script database.</p>
+<p><code>更新脚本数据库，每次更新脚本后</code></p>
+<p>–script-help=: Show help about scripts.<br> is a comma-separated list of script-files or<br> script-categories.</p>
+<p><code>显示脚本的帮助信息，其中部分可以逗号分隔的文件或脚本类别</code></p>
+<p>OS DETECTION:操作系统探测<br>-O: Enable OS detection</p>
+<p><code>指定Nmap进行OS侦测。</code></p>
+<p>–osscan-limit: Limit OS detection to promising targets</p>
+<p><code>限制Nmap只对确定的主机的进行OS探测（至少需确知该主机分别有一个open和closed的端口）。</code></p>
+<p>–osscan-guess: Guess OS more aggressively</p>
+<p><code>大胆猜测对方的主机的系统类型。由此准确性会下降不少，但会尽可能多为用户提供潜在的操作系统。</code></p>
+<p>TIMING AND PERFORMANCE:<br>Options which take are in seconds, or append ‘ms’ (milliseconds),<br>‘s’ (seconds), ‘m’ (minutes), or ‘h’ (hours) to the value (e.g. 30m).<br>-T&lt;0-5&gt;: Set timing template (higher is faster)</p>
+<p><code>-T0 偏执的：非常非常慢，用于IDS逃逸</code></p>
+<p><code>-T1 猥琐的：相当慢，用于IDS逃逸</code></p>
+<p><code>-T2 有礼貌的：降低速度以消耗更小的带宽，比默认慢十倍</code></p>
+<p><code>-T3 普通的：默认，根据目标的反应自动调整时间模式</code></p>
+<p><code>-T4 野蛮的：假定处在一个很好的网络环境，请求可能会淹没目标</code></p>
+<p><code>-T5 疯狂的：非常野蛮，很可能会淹没目标端口或是漏掉一些开放端口</code></p>
+<p>–min-hostgroup/max-hostgroup : Parallel host scan group sizes</p>
+<p><code>平行的主机扫描组的大小</code></p>
+<p>–min-parallelism/max-parallelism : Probe parallelization</p>
+<p><code>并行探测</code></p>
+<p>–min-rtt-timeout/max-rtt-timeout/initial-rtt-timeout : Specifies<br> probe round trip time.</p>
+<p><code>指定每轮探测的时间</code></p>
+<p>–max-retries : Caps number of port scan probe retransmissions.</p>
+<p><code>扫描探测的上限次数设定</code></p>
+<p>–host-timeout : Give up on target after this long</p>
+<p>设置timeout时间</p>
+<p>–scan-delay/–max-scan-delay : Adjust delay between probes</p>
+<p><code>调整两次探测之间的延迟</code></p>
+<p>–min-rate : Send packets no slower than per second<br>–max-rate : Send packets no faster than per second</p>
+<p><code>每秒发送数据包不少于次</code></p>
+<p>FIREWALL/IDS EVASION AND SPOOFING:防火墙/IDS规避<br>-f; –mtu : fragment packets (optionally w/given MTU)</p>
+<p><code>指定使用分片、指定数据包的MTU.</code></p>
+<p>-D &lt;decoy1,decoy2[,ME],…&gt;: Cloak a scan with decoys</p>
+<p><code>用一组IP地址掩盖真实地址，其中ME填入自己的IP地址</code></p>
+<p>-S <IP_Address>: Spoof source address</p>
+<p><code>伪装成其他IP地址</code></p>
+<p>-e : Use specified interface</p>
+<p><code>使用特定的网络接口,指定网卡</code></p>
+<p>-g/–source-port : Use given port number</p>
+<p><code>使用指定源端口</code></p>
+<p>–proxies &lt;url1,[url2],…&gt;: Relay connections through HTTP/SOCKS4 proxies</p>
+<p><code>使用代理</code></p>
+<p>–data : Append a custom payload to sent packets</p>
+<p><code>给数据包添加指定数据</code></p>
+<p>–data-string : Append a custom ASCII string to sent packets</p>
+<p><code>给数据包添加指定ASCII字符串</code></p>
+<p>–data-length : Append random data to sent packets</p>
+<p><code>填充随机数据让数据包长度达到Num</code></p>
+<p>–ip-options : Send packets with specified ip options</p>
+<p><code>使用指定的IP选项来发送数据包。</code></p>
+<p>–ttl : Set IP time-to-live field</p>
+<p><code>设置time-to-live时间,没什么用</code></p>
+<p>–spoof-mac &lt;mac address/prefix/vendor name&gt;: Spoof your MAC address</p>
+<p><code>伪装MAC地址，伪装mac地址为指定值</code></p>
+<p>–badsum: Send packets with a bogus TCP/UDP/SCTP checksum</p>
+<p><code>使用错误的checksum来发送数据包（正常情况下，该类数据包被抛弃，如果收到回复，说明回复来自防火墙或IDS/IPS）</code></p>
+<p><code>可用户检测是否有防火墙或IDS/IPS</code></p>
+<p>OUTPUT:<br>-oN/-oX/-oS/-oG : Output scan in normal, XML, s|&lt;rIpt kIddi3,<br> and Grepable format, respectively, to the given filename.</p>
+<p><code>指定输出文件格式，分为正常，XML</code></p>
+<p>-oA : Output in the three major formats at once</p>
+<p><code>用生成以上格式的文件</code></p>
+<p>-v: Increase verbosity level (use -vv or more for greater effect)</p>
+<p><code>这个选项使用两次，会提供更详细的信息</code></p>
+<p>-d: Increase debugging level (use -dd or more for greater effect)</p>
+<p>(<code>提高或设置调试级别，最高级别-d9，输出更多的细节)</code><br>————————————————</p>
+<p><img src="https://img-blog.csdnimg.cn/20181227101003871.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzIxMzEwNjg5,size_16,color_FFFFFF,t_70" alt="" loading="lazy"></p>
+<p>原文链接：<a href="https://blog.csdn.net/qq_21310689/java/article/details/85273250" target="_blank" rel="noopener">https://blog.csdn.net/qq_21310689/java/article/details/85273250</a></p>
+</div><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>北轨</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="http://yoursite.com/2020/06/26/Nmap/" title="Nmap常用命令">http://yoursite.com/2020/06/26/Nmap/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 "><svg class="icon"><use xlink:href="#icon-creative-commons-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-by-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-nc-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-sa-line"></use></svg></a> 许可协议。</li></ul></section></article><div class="post-nav"><div class="post-nav-item"></div><div class="post-nav-item"><a class="post-nav-next" href="/2020/06/26/MS17-010/" rel="next" title="永恒之蓝漏洞利用"><span class="post-nav-text">永恒之蓝漏洞利用</span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-right-s-line"></use></svg></a></div></div></div><div id="comment"><div class="comment-tooltip text-center"><span>点击按钮跳转 GitHub Issues 评论。</span><br><span>若没有本文 Issue，您可以使用 Comment 模版新建。</span><br><a class="hty-button hty-button--raised" id="github-issues" href="https://github.com/bei-gui/bei-gui.gitee.io/issues?q=is:issue+Nmap常用命令" target="_blank" rel="noopener">GitHub Issues</a></div></div></main><footer class="sidebar-translate" id="footer"><div class="copyright"><span>&copy; 2019 – 2020 </span><span class="with-love" id="animate"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-cloud-line"></use></svg></span><span class="author"> Beigui</span></div><div class="powered"><span>由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v4.2.1</span><span class="footer-separator">|</span><span>主题 - <a rel="noopener" href="https://github.com/YunYouJun/hexo-theme-yun" target="_blank"><span>Yun</span></a> v0.9.1</span></div></footer><a class="hty-icon-button" id="goUp" aria-label="back-to-top" href="#"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-up-s-line"></use></svg><svg class="progress-circle-container" viewBox="0 0 100 100"><circle class="progress-circle" id="progressCircle" cx="50" cy="50" r="48" fill="none" stroke="#0078E7" stroke-width="2" stroke-linecap="round"></circle></svg></a></div><script defer src="/js/utils.js"></script><script defer src="/js/hexo-theme-yun.js"></script></body></html>
