@@ -1,0 +1,171 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#0078E7"><meta name="author" content="Beigui"><meta name="copyright" content="Beigui"><meta name="generator" content="Hexo 4.2.1"><meta name="theme" content="hexo-theme-yun"><title>DVWA系列-Command Injection | beigui blog</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&amp;family=Source+Code+Pro&amp;display=swap" media="none" onload="this.media='all'"><script src="//at.alicdn.com/t/font_1140697_stqaphw3j4.js" async></script><script src="https://cdn.jsdelivr.net/npm/scrollreveal/dist/scrollreveal.min.js" defer></script><script>document.addEventListener("DOMContentLoaded", () => {
+  [".post-card",".post-content img"].forEach((target)=> {
+    ScrollReveal().reveal(target);
+  })
+});
+</script><link class="aplayer-style-marker" rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/aplayer@latest/dist/APlayer.min.css"><script class="aplayer-script-marker" src="https://cdn.jsdelivr.net/npm/aplayer@latest/dist/APlayer.min.js" defer></script><script class="meting-script-marker" src="https://cdn.jsdelivr.net/npm/meting@1/dist/Meting.min.js" defer></script><link rel="shortcut icon" type="image/svg+xml" href="/yun.svg"><link rel="mask-icon" href="/yun.svg" color="#0078E7"><link rel="alternate icon" href="/yun.ico"><link rel="preload" href="/css/hexo-theme-yun.css" as="style"><link rel="preload" href="/js/utils.js" as="script"><link rel="preload" href="/js/hexo-theme-yun.js" as="script"><link rel="prefetch" href="/js/sidebar.js" as="script"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="stylesheet" href="/css/hexo-theme-yun.css"><script id="yun-config">
+    const Yun = window.Yun || {};
+    window.CONFIG = {"root":"/","title":"北轨的小破站","version":"0.9.1","anonymous_image":"https://cdn.jsdelivr.net/gh/YunYouJun/cdn/img/avatar/none.jpg","say":{"api":"https://v1.hitokoto.cn","hitokoto":true},"fireworks":{"colors":["102, 167, 221","62, 131, 225","33, 78, 194"]}};
+  </script><script>(function(){
+  var bp = document.createElement('script');
+  var curProtocol = window.location.protocol.split(':')[0];
+  if (curProtocol === 'https') {
+    bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+  }
+  else {
+    bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+  }
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(bp, s);
+})();</script><meta name="description" content="Command Injection Command Injection，即命令注入，是指通过提交恶意构造的参数破坏命令语句结构，从而达到执行恶意命令的目的。PHP命令注入攻击漏洞是PHP应用程序中常见的脚本漏洞之一，国内著名的Web应用程序Discuz!、DedeCMS等都曾经存在过该类型漏洞。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DVWA系列-Command Injection">
+<meta property="og:url" content="http://beigui.xyz/2020/09/27/dvwa-CommandInjection/">
+<meta property="og:site_name" content="beigui blog">
+<meta property="og:description" content="Command Injection Command Injection，即命令注入，是指通过提交恶意构造的参数破坏命令语句结构，从而达到执行恶意命令的目的。PHP命令注入攻击漏洞是PHP应用程序中常见的脚本漏洞之一，国内著名的Web应用程序Discuz!、DedeCMS等都曾经存在过该类型漏洞。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gitee.com/bei-gui/picture_bed/raw/master/img/20200928145037.png">
+<meta property="og:image" content="https://gitee.com/bei-gui/picture_bed/raw/master/img/20200928150133.png">
+<meta property="article:published_time" content="2020-09-27T11:24:51.000Z">
+<meta property="article:modified_time" content="2020-09-28T07:09:50.411Z">
+<meta property="article:author" content="Beigui">
+<meta property="article:tag" content="dvwa靶场">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/bei-gui/picture_bed/raw/master/img/20200928145037.png"><script src="/js/ui/mode.js"></script><link rel="stylesheet" href="/css/prism.css" type="text/css"></head><body><script defer src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script defer src="/js/ui/fireworks.js"></script><canvas class="fireworks"></canvas><div class="container"><a class="sidebar-toggle hty-icon-button" id="menu-btn"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><div class="sidebar-toggle sidebar-overlay"></div><aside class="sidebar"><script defer src="/js/sidebar.js"></script><ul class="sidebar-nav"><li class="sidebar-nav-item sidebar-nav-toc hty-icon-button sidebar-nav-active" data-target="post-toc-wrap" title="文章目录"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-list-ordered"></use></svg></li><li class="sidebar-nav-item sidebar-nav-overview hty-icon-button" data-target="site-overview-wrap" title="站点概览"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-passport-line"></use></svg></li></ul><div class="sidebar-panel" id="site-overview-wrap"><div class="site-info mickey-mouse"><a class="site-author-avatar" href="/about/" title="Beigui"><img width="96" loading="lazy" src="/yun.png" alt="Beigui"></a><div class="site-author-name"><a href="/about/">Beigui</a></div><a class="site-name" href="/about/site.html">beigui blog</a><sub class="site-subtitle">Network security enthusiasts | CTFer</sub><div class="site-desciption"></div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/" title="首页"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-home-4-line"></use></svg></span></a><div class="site-state-item"><a href="/archives/" title="归档"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-archive-line"></use></svg></span><span class="site-state-item-count">10</span></a></div><div class="site-state-item"><a href="/categories/" title="分类"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-folder-2-line"></use></svg></span><span class="site-state-item-count">0</span></a></div><div class="site-state-item"><a href="/tags/" title="标签"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="site-state-item-count">6</span></a></div><a class="site-state-item hty-icon-button" href="https://yun.yunyoujun.cn" target="_blank" rel="noopener" title="文档"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-settings-line"></use></svg></span></a></nav><hr style="margin-bottom:0.5rem"><div class="links-of-author"><a class="links-of-author-item hty-icon-button" rel="noopener" href="/atom.xml" title="RSS" target="_blank" style="color:orange"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-rss-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="http://wpa.qq.com/msgrd?v=3&amp;uin=1769606485&amp;site=qq&amp;menu=yes" title="QQ" target="_blank" style="color:#12B7F5"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-qq-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://github.com/bei-gui" title="GitHub" target="_blank" style="color:#6e5494"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-github-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://music.163.com/#/user/home?id=1539583733" title="网易云音乐" target="_blank" style="color:#C20C0C"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-netease-cloud-music-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://space.bilibili.com/479406079" title="哔哩哔哩" target="_blank" style="color:#FF8EB3"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-bilibili-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="1769606485@qq.com" title="E-Mailqq.com" target="_blank" style="color:#8E71C1"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-mail-line"></use></svg></a></div><hr style="margin:0.5rem 1rem"><div class="links"><a class="links-item hty-icon-button" href="/links/" title="我的小伙伴们" style="color:dodgerblue"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-genderless-line"></use></svg></a></div><br><a class="links-item hty-icon-button" id="toggle-mode-btn" href="javascript:;" title="Mode" style="color: #f1cb64"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-contrast-2-line"></use></svg></a></div><div class="sidebar-panel sidebar-panel-active" id="post-toc-wrap"><div class="post-toc"><div class="post-toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Command-Injection"><span class="toc-number">1.</span> <span class="toc-text">Command Injection</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#low"><span class="toc-number">1.1.</span> <span class="toc-text">low</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Medium"><span class="toc-number">1.2.</span> <span class="toc-text">Medium</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#High"><span class="toc-number">1.3.</span> <span class="toc-text">High</span></a></li></ol></li></ol></div></div></div></aside><main class="sidebar-translate" id="content"><div id="post"><article class="post-block" itemscope itemtype="https://schema.org/Article"><link itemprop="mainEntityOfPage" href="http://beigui.xyz/2020/09/27/dvwa-CommandInjection/"><span hidden itemprop="author" itemscope itemtype="https://schema.org/Person"><meta itemprop="name" content="Beigui"><meta itemprop="description"></span><span hidden itemprop="publisher" itemscope itemtype="https://schema.org/Organization"><meta itemprop="name" content="beigui blog"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">DVWA系列-Command Injection</h1><div class="post-meta"><div class="post-time" style="display:block"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-line"></use></svg></span> <time title="创建时间：2020-09-27 19:24:51" itemprop="dateCreated datePublished" datetime="2020-09-27T19:24:51+08:00">2020-09-27</time><span class="post-meta-divider">-</span><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-2-line"></use></svg></span> <time title="修改时间：2020-09-28 15:09:50" itemprop="dateModified" datetime="2020-09-28T15:09:50+08:00">2020-09-28</time></div><span class="post-count"><span class="post-symbolcount"><span class="post-meta-item-icon" title="本文字数"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-file-word-line"></use></svg></span> <span title="本文字数">18k</span><span class="post-meta-divider">-</span><span class="post-meta-item-icon" title="阅读时长"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-timer-line"></use></svg></span> <span title="阅读时长">33 分钟</span></span></span><span class="post-busuanzi"><span class="post-meta-divider">-</span><span class="post-meta-item-icon" title="阅读次数"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-eye-line"></use></svg> <span id="busuanzi_value_page_pv"></span></span></span><div class="post-classify"><span class="post-tag"><a class="tag" href="/tags/dvwa%E9%9D%B6%E5%9C%BA/" style="--text-color:var(--hty-text-color)"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="tag-name">dvwa靶场</span></a></span></div></div></header><section class="post-body" itemprop="articleBody"><div class="post-content post-markdown"><blockquote>
+<h2 id="Command-Injection"><a href="#Command-Injection" class="headerlink" title="Command Injection"></a>Command Injection</h2></blockquote>
+<p>Command Injection，即命令注入，是指通过提交恶意构造的参数破坏命令语句结构，从而达到执行恶意命令的目的。PHP命令注入攻击漏洞是PHP应用程序中常见的脚本漏洞之一，国内著名的Web应用程序Discuz!、DedeCMS等都曾经存在过该类型漏洞。</p>
+<a id="more"></a>
+
+<p><strong>下面对三种级别的代码进行分析。</strong></p>
+<h3 id="low"><a href="#low" class="headerlink" title="low"></a>low</h3><p>源代码</p>
+<pre class=" language-php"><code class="language-php"> <span class="token delimiter">&lt;?php</span>
+
+<span class="token keyword">if</span><span class="token punctuation">(</span> <span class="token function">isset</span><span class="token punctuation">(</span> <span class="token variable">$_POST</span><span class="token punctuation">[</span> <span class="token string">'submit'</span> <span class="token punctuation">]</span> <span class="token punctuation">)</span> <span class="token punctuation">)</span> <span class="token punctuation">{</span>
+
+    <span class="token variable">$target</span> <span class="token operator">=</span> <span class="token variable">$_REQUEST</span><span class="token punctuation">[</span> <span class="token string">'ip'</span> <span class="token punctuation">]</span><span class="token punctuation">;</span>
+
+    <span class="token comment" spellcheck="true">// Determine OS and execute the ping command.</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token function">stristr</span><span class="token punctuation">(</span><span class="token function">php_uname</span><span class="token punctuation">(</span><span class="token string">'s'</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token string">'Windows NT'</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span> 
+
+        <span class="token variable">$cmd</span> <span class="token operator">=</span> <span class="token function">shell_exec</span><span class="token punctuation">(</span> <span class="token string">'ping  '</span> <span class="token punctuation">.</span> <span class="token variable">$target</span> <span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">echo</span> <span class="token string">'&lt;pre>'</span><span class="token punctuation">.</span><span class="token variable">$cmd</span><span class="token punctuation">.</span><span class="token string">'&lt;/pre>'</span><span class="token punctuation">;</span>
+
+    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span> 
+
+        <span class="token variable">$cmd</span> <span class="token operator">=</span> <span class="token function">shell_exec</span><span class="token punctuation">(</span> <span class="token string">'ping  -c 3 '</span> <span class="token punctuation">.</span> <span class="token variable">$target</span> <span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">echo</span> <span class="token string">'&lt;pre>'</span><span class="token punctuation">.</span><span class="token variable">$cmd</span><span class="token punctuation">.</span><span class="token string">'&lt;/pre>'</span><span class="token punctuation">;</span>
+
+    <span class="token punctuation">}</span>
+
+<span class="token punctuation">}</span>
+<span class="token delimiter">?></span> </code></pre>
+<p>相关函数介绍</p>
+<p><em>stristr(string,search,before_search)</em></p>
+<p>stristr函数搜索字符串在另一字符串中的第一次出现，返回字符串的剩余部分（从匹配点），如果未找到所搜索的字符串，则返回 FALSE。参数string规定被搜索的字符串，参数search规定要搜索的字符串（如果该参数是数字，则搜索匹配该数字对应的 ASCII 值的字符），可选参数before_true为布尔型，默认为”false” ，如果设置为 “true”，函数将返回 search 参数第一次出现之前的字符串部分。</p>
+<p><em>php_uname(mode)</em></p>
+<p>这个函数会返回运行php的操作系统的相关描述，参数mode可取值”a” （此为默认，包含序列”s n r v m”里的所有模式），”s ”（返回操作系统名称），”n”（返回主机名），” r”（返回版本名称），”v”（返回版本信息）， ”m”（返回机器类型）。</p>
+<p>可以通过源代码看出服务器只是针对不同的操作系统执行不同的ping命令，但是对ip的参数并没有进行任何的过滤，从而产生了命令注入。下面我来演示一下如何利用此漏洞。</p>
+<p>windows和linux系统都可以使用&amp;&amp;来执行多条命令</p>
+<p>例如 127.0.0.1&amp;&amp;ls</p>
+<p><img src="https://gitee.com/bei-gui/picture_bed/raw/master/img/20200928145037.png" alt="" loading="lazy"></p>
+<p>我们可以看到服务器不光执行了对127.0.0.1的ping命令同时将ls命令也执行了并返回服务器目录下的文件</p>
+<h3 id="Medium"><a href="#Medium" class="headerlink" title="Medium"></a>Medium</h3><p>源代码</p>
+<pre class=" language-php"><code class="language-php"><span class="token delimiter">&lt;?php</span>
+
+<span class="token keyword">if</span><span class="token punctuation">(</span> <span class="token function">isset</span><span class="token punctuation">(</span> <span class="token variable">$_POST</span><span class="token punctuation">[</span> <span class="token string">'submit'</span><span class="token punctuation">]</span> <span class="token punctuation">)</span> <span class="token punctuation">)</span> <span class="token punctuation">{</span>
+<span class="token variable">$target</span> <span class="token operator">=</span> <span class="token variable">$_REQUEST</span><span class="token punctuation">[</span> <span class="token string">'ip'</span> <span class="token punctuation">]</span><span class="token punctuation">;</span>
+
+<span class="token comment" spellcheck="true">// Remove any of the charactars in the array (blacklist).</span>
+<span class="token variable">$substitutions</span> <span class="token operator">=</span> <span class="token keyword">array</span><span class="token punctuation">(</span>
+    <span class="token string">'&amp;&amp;'</span> <span class="token operator">=</span><span class="token operator">></span> <span class="token string">''</span><span class="token punctuation">,</span>
+    <span class="token string">';'</span> <span class="token operator">=</span><span class="token operator">></span> <span class="token string">''</span><span class="token punctuation">,</span>
+<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token variable">$target</span> <span class="token operator">=</span> <span class="token function">str_replace</span><span class="token punctuation">(</span> <span class="token function">array_keys</span><span class="token punctuation">(</span> <span class="token variable">$substitutions</span> <span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token variable">$substitutions</span><span class="token punctuation">,</span> <span class="token variable">$target</span> <span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment" spellcheck="true">// Determine OS and execute the ping command.</span>
+<span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token function">stristr</span><span class="token punctuation">(</span><span class="token function">php_uname</span><span class="token punctuation">(</span><span class="token string">'s'</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token string">'Windows NT'</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span> 
+
+    <span class="token variable">$cmd</span> <span class="token operator">=</span> <span class="token function">shell_exec</span><span class="token punctuation">(</span> <span class="token string">'ping  '</span> <span class="token punctuation">.</span> <span class="token variable">$target</span> <span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">echo</span> <span class="token string">'&lt;pre>'</span><span class="token punctuation">.</span><span class="token variable">$cmd</span><span class="token punctuation">.</span><span class="token string">'&lt;/pre>'</span><span class="token punctuation">;</span>
+
+<span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span> 
+
+    <span class="token variable">$cmd</span> <span class="token operator">=</span> <span class="token function">shell_exec</span><span class="token punctuation">(</span> <span class="token string">'ping  -c 3 '</span> <span class="token punctuation">.</span> <span class="token variable">$target</span> <span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">echo</span> <span class="token string">'&lt;pre>'</span><span class="token punctuation">.</span><span class="token variable">$cmd</span><span class="token punctuation">.</span><span class="token string">'&lt;/pre>'</span><span class="token punctuation">;</span>
+
+<span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+<span class="token delimiter">?></span></code></pre>
+<p>我们可以看到与low级别的代码相比，medium级别的代码进行了简单的过滤将“&amp;&amp;”、“；”替换为了空格，但是这种设置白名单的方法并不能彻底的防范此漏洞，因为只过滤了“&amp;&amp;”、“；”，所以“&amp;”并不会收到影响。</p>
+<p>例如 127.0.0.1&amp;ls依旧可以顺利执行；</p>
+<p><img src="https://gitee.com/bei-gui/picture_bed/raw/master/img/20200928150133.png" alt="" loading="lazy"></p>
+<p>我们这里可以看到&amp;&amp;与&amp;的是存在区别的</p>
+<p>1.Command 1&amp;&amp;Command 2</p>
+<p>先执行Command 1，执行成功后执行Command 2，否则不执行Command 2</p>
+<p>2.Command 1&amp;Command 2</p>
+<p>先执行Command 1，不管是否成功，都会执行Command 2</p>
+<p>我们还可以将&amp;&amp;写为&amp;;&amp;这样”;”被替换为空字符，所以当指令执行时还是相当于执行了&amp;&amp;；</p>
+<h3 id="High"><a href="#High" class="headerlink" title="High"></a>High</h3><p>源代码</p>
+<pre class=" language-php"><code class="language-php">  <span class="token delimiter">&lt;?php</span>
+
+<span class="token keyword">if</span><span class="token punctuation">(</span> <span class="token function">isset</span><span class="token punctuation">(</span> <span class="token variable">$_POST</span><span class="token punctuation">[</span> <span class="token string">'submit'</span> <span class="token punctuation">]</span> <span class="token punctuation">)</span> <span class="token punctuation">)</span> <span class="token punctuation">{</span>
+<span class="token variable">$target</span> <span class="token operator">=</span> <span class="token variable">$_REQUEST</span><span class="token punctuation">[</span><span class="token string">"ip"</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+<span class="token variable">$target</span> <span class="token operator">=</span> <span class="token function">stripslashes</span><span class="token punctuation">(</span> <span class="token variable">$target</span> <span class="token punctuation">)</span>
+<span class="token comment" spellcheck="true">// Split the IP into 4 octects</span>
+<span class="token variable">$octet</span> <span class="token operator">=</span> <span class="token function">explode</span><span class="token punctuation">(</span><span class="token string">"."</span><span class="token punctuation">,</span> <span class="token variable">$target</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment" spellcheck="true">// Check IF each octet is an integer</span>
+<span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token function">is_numeric</span><span class="token punctuation">(</span><span class="token variable">$octet</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> <span class="token punctuation">(</span><span class="token function">is_numeric</span><span class="token punctuation">(</span><span class="token variable">$octet</span><span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> <span class="token punctuation">(</span><span class="token function">is_numeric</span><span class="token punctuation">(</span><span class="token variable">$octet</span><span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> <span class="token punctuation">(</span><span class="token function">is_numeric</span><span class="token punctuation">(</span><span class="token variable">$octet</span><span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> <span class="token punctuation">(</span><span class="token function">sizeof</span><span class="token punctuation">(</span><span class="token variable">$octet</span><span class="token punctuation">)</span> <span class="token operator">==</span> <span class="token number">4</span><span class="token punctuation">)</span>  <span class="token punctuation">)</span> <span class="token punctuation">{</span>
+
+<span class="token comment" spellcheck="true">// If all 4 octets are int's put the IP back together.</span>
+<span class="token variable">$target</span> <span class="token operator">=</span> <span class="token variable">$octet</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token string">'.'</span><span class="token punctuation">.</span><span class="token variable">$octet</span><span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token string">'.'</span><span class="token punctuation">.</span><span class="token variable">$octet</span><span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token string">'.'</span><span class="token punctuation">.</span><span class="token variable">$octet</span><span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+ <span class="token comment" spellcheck="true">// Determine OS and execute the ping command.</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token function">stristr</span><span class="token punctuation">(</span><span class="token function">php_uname</span><span class="token punctuation">(</span><span class="token string">'s'</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token string">'Windows NT'</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span> 
+
+        <span class="token variable">$cmd</span> <span class="token operator">=</span> <span class="token function">shell_exec</span><span class="token punctuation">(</span> <span class="token string">'ping  '</span> <span class="token punctuation">.</span> <span class="token variable">$target</span> <span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">echo</span> <span class="token string">'&lt;pre>'</span><span class="token punctuation">.</span><span class="token variable">$cmd</span><span class="token punctuation">.</span><span class="token string">'&lt;/pre>'</span><span class="token punctuation">;</span>
+
+    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span> 
+
+        <span class="token variable">$cmd</span> <span class="token operator">=</span> <span class="token function">shell_exec</span><span class="token punctuation">(</span> <span class="token string">'ping  -c 3 '</span> <span class="token punctuation">.</span> <span class="token variable">$target</span> <span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">echo</span> <span class="token string">'&lt;pre>'</span><span class="token punctuation">.</span><span class="token variable">$cmd</span><span class="token punctuation">.</span><span class="token string">'&lt;/pre>'</span><span class="token punctuation">;</span>
+
+    <span class="token punctuation">}</span>
+
+<span class="token punctuation">}</span>
+
+<span class="token keyword">else</span> <span class="token punctuation">{</span>
+    <span class="token keyword">echo</span> <span class="token string">'&lt;pre>ERROR: You have entered an invalid IP&lt;/pre>'</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+<span class="token delimiter">?></span> </code></pre>
+<p>相关函数介绍</p>
+<p><em>stripslashes(string)</em></p>
+<p>stripslashes函数会删除字符串string中的反斜杠，返回已剥离反斜杠的字符串。</p>
+<p><em>explode(separator,string,limit)</em></p>
+<p>把字符串打散为数组，返回字符串的数组。参数separator规定在哪里分割字符串，参数string是要分割的字符串，可选参数limit规定所返回的数组元素的数目。</p>
+<p><em>is_numeric(string)</em></p>
+<p>检测string是否为数字或数字字符串，如果是返回TRUE，否则返回FALSE。</p>
+<p>可以看到，Impossible级别的代码加入了Anti-CSRF token，同时对参数ip进行了严格的限制，只有诸如“数字.数字.数字.数字”的输入才会被接收执行，因此不存在命令注入漏洞。</p>
+</div><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>Beigui</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="http://beigui.xyz/2020/09/27/dvwa-CommandInjection/" title="DVWA系列-Command Injection">http://beigui.xyz/2020/09/27/dvwa-CommandInjection/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 "><svg class="icon"><use xlink:href="#icon-creative-commons-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-by-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-nc-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-sa-line"></use></svg></a> 许可协议。</li></ul></section></article><div class="post-nav"><div class="post-nav-item"></div><div class="post-nav-item"><a class="post-nav-next" href="/2020/09/26/dvwa-BurteForce/" rel="next" title="DVWA系列-Burte Force"><span class="post-nav-text">DVWA系列-Burte Force</span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-right-s-line"></use></svg></a></div></div></div><div id="comment"><div class="comment-tooltip text-center"><span>点击按钮跳转 GitHub Issues 评论。</span><br><span>若没有本文 Issue，您可以使用 Comment 模版新建。</span><br><a class="hty-button hty-button--raised" id="github-issues" href="https://github.com/bei-gui/bei-gui.github.io/issues?q=is:issue+DVWA系列-Command Injection" target="_blank" rel="noopener">GitHub Issues</a></div><div id="valine-container"></div><script src="https://cdn.jsdelivr.net/npm/valine@latest/dist/Valine.min.js"></script><script>function initValine() {
+  const valineConfig = {"enable":"ture","appId":"wHVOT6bFIaTwme3n6GGgStyK-gzGzoHsz","appKey":"yxIzvqfCcaUqAKxJX1nMhM28","placeholder":"（欢迎大家留言，备注邮箱我回复有提示）","avatar":null,"pageSize":10,"visitor":false,"highlight":false,"recordIP":false,"enableQQ":true,"el":"#valine-container","lang":"zh-cn"}
+  valineConfig.path = window.location.pathname
+  new Valine(valineConfig)
+}
+setTimeout(initValine, 1000)</script></div></main><footer class="sidebar-translate" id="footer"><div class="beian"><a rel="noopener" href="http://www.beian.miit.gov.cn" target="_blank">鲁ICP备20027958号</a></div><div class="copyright"><span>&copy; 2019 – 2020 </span><span class="with-love" id="animate"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-cloud-line"></use></svg></span><span class="author"> Beigui</span></div><div class="live_time"><span>本博客已萌萌哒地运行</span><span id="display_live_time"></span><span class="moe-text">(●'◡'●)</span><script>function blog_live_time() {
+  window.setTimeout(blog_live_time, 1000);
+  const start = new Date('2020-06-26T00:00:00');
+  const now = new Date();
+  const timeDiff = (now.getTime() - start.getTime());
+  const msPerMinute = 60 * 1000;
+  const msPerHour = 60 * msPerMinute;
+  const msPerDay = 24 * msPerHour;
+  const passDay = Math.floor(timeDiff / msPerDay);
+  const passHour = Math.floor((timeDiff % msPerDay) / 60 / 60 / 1000);
+  const passMinute = Math.floor((timeDiff % msPerHour) / 60 / 1000);
+  const passSecond = Math.floor((timeDiff % msPerMinute) / 1000);
+  display_live_time.innerHTML = " " + passDay + " 天 " + passHour + " 小时 " + passMinute + " 分 " + passSecond + " 秒";
+}
+blog_live_time();
+</script></div><div id="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_site_uv" title="总访客量"><span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-user-line"></use></svg></span><span id="busuanzi_value_site_uv"></span></span><span class="footer-separator">|</span><span id="busuanzi_container_site_pv" title="总访问量"><span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-eye-line"></use></svg></span><span id="busuanzi_value_site_pv"></span></span></div></footer><a class="hty-icon-button" id="goUp" aria-label="back-to-top" href="#"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-up-s-line"></use></svg><svg class="progress-circle-container" viewBox="0 0 100 100"><circle class="progress-circle" id="progressCircle" cx="50" cy="50" r="48" fill="none" stroke="#0078E7" stroke-width="2" stroke-linecap="round"></circle></svg></a></div><script defer src="/js/utils.js"></script><script defer src="/js/hexo-theme-yun.js"></script></body></html>
