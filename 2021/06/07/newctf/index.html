@@ -1,0 +1,199 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#0078E7"><meta name="author" content="Beigui"><meta name="copyright" content="Beigui"><meta name="generator" content="Hexo 4.2.1"><meta name="theme" content="hexo-theme-yun"><title>第二届newctf部分WP | beigui blog</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&amp;family=Source+Code+Pro&amp;display=swap" media="none" onload="this.media='all'"><script src="//at.alicdn.com/t/font_1140697_stqaphw3j4.js" async></script><script src="https://cdn.jsdelivr.net/npm/scrollreveal/dist/scrollreveal.min.js" defer></script><script>document.addEventListener("DOMContentLoaded", () => {
+  [".post-card",".post-content img"].forEach((target)=> {
+    ScrollReveal().reveal(target);
+  })
+});
+</script><link class="aplayer-style-marker" rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/aplayer@latest/dist/APlayer.min.css"><script class="aplayer-script-marker" src="https://cdn.jsdelivr.net/npm/aplayer@latest/dist/APlayer.min.js" defer></script><script class="meting-script-marker" src="https://cdn.jsdelivr.net/npm/meting@1/dist/Meting.min.js" defer></script><link rel="shortcut icon" type="image/svg+xml" href="/yun.svg"><link rel="mask-icon" href="/yun.svg" color="#0078E7"><link rel="alternate icon" href="/yun.ico"><link rel="preload" href="/css/hexo-theme-yun.css" as="style"><link rel="preload" href="/js/utils.js" as="script"><link rel="preload" href="/js/hexo-theme-yun.js" as="script"><link rel="prefetch" href="/js/sidebar.js" as="script"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="stylesheet" href="/css/hexo-theme-yun.css"><script id="yun-config">
+    const Yun = window.Yun || {};
+    window.CONFIG = {"root":"/","title":"北轨的小破站","version":"0.9.1","anonymous_image":"https://cdn.jsdelivr.net/gh/YunYouJun/cdn/img/avatar/none.jpg","say":{"api":"https://v1.hitokoto.cn","hitokoto":true},"fireworks":{"colors":["102, 167, 221","62, 131, 225","33, 78, 194"]}};
+  </script><script>(function(){
+  var bp = document.createElement('script');
+  var curProtocol = window.location.protocol.split(':')[0];
+  if (curProtocol === 'https') {
+    bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+  }
+  else {
+    bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+  }
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(bp, s);
+})();</script><meta name="description" content="上周带学弟参加了一个民间比赛，本来比赛介绍是“萌新“赛，我就准备让学弟试试手，结果呀我就 不该相信CTF的萌新字眼，学弟看到题目一脸懵逼，于是我也注册账号参加比赛，结果看到题目确实是非常”萌新“，让我自己都感觉自己还是一个萌新，明明是萌新赛结果大佬云集，肝到最后才一百多名，虽然群主说本次比赛有一千多人参加，一百多名属于前列了，但还是感觉自己是一个小菜鸡（PS：如果自己做题快的话，可能我就有贴纸了�">
+<meta property="og:type" content="article">
+<meta property="og:title" content="第二届newctf部分WP">
+<meta property="og:url" content="http://beigui.xyz/2021/06/07/newctf/">
+<meta property="og:site_name" content="beigui blog">
+<meta property="og:description" content="上周带学弟参加了一个民间比赛，本来比赛介绍是“萌新“赛，我就准备让学弟试试手，结果呀我就 不该相信CTF的萌新字眼，学弟看到题目一脸懵逼，于是我也注册账号参加比赛，结果看到题目确实是非常”萌新“，让我自己都感觉自己还是一个萌新，明明是萌新赛结果大佬云集，肝到最后才一百多名，虽然群主说本次比赛有一千多人参加，一百多名属于前列了，但还是感觉自己是一个小菜鸡（PS：如果自己做题快的话，可能我就有贴纸了�">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gitee.com/bei-gui/picture_bed/raw/master/img/image-20210607115058354.png">
+<meta property="og:image" content="https://gitee.com/bei-gui/picture_bed/raw/master/img/image-20210607201358317.png">
+<meta property="og:image" content="https://gitee.com/bei-gui/picture_bed/raw/master/img/clip_image002.jpg">
+<meta property="og:image" content="https://gitee.com/bei-gui/picture_bed/raw/master/img/image-20210607203403834.png">
+<meta property="og:image" content="https://gitee.com/bei-gui/picture_bed/raw/master/img/image-20210607204143471.png">
+<meta property="og:image" content="https://gitee.com/bei-gui/picture_bed/raw/master/img/image-20210607204831665.png">
+<meta property="og:image" content="https://gitee.com/bei-gui/picture_bed/raw/master/img/image-20210607205008003.png">
+<meta property="article:published_time" content="2021-06-07T03:29:05.000Z">
+<meta property="article:modified_time" content="2021-06-07T13:00:24.716Z">
+<meta property="article:author" content="Beigui">
+<meta property="article:tag" content="ctf">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/bei-gui/picture_bed/raw/master/img/image-20210607115058354.png"><script src="/js/ui/mode.js"></script><link rel="stylesheet" href="/css/prism.css" type="text/css"></head><body><script defer src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script defer src="/js/ui/fireworks.js"></script><canvas class="fireworks"></canvas><div class="container"><a class="sidebar-toggle hty-icon-button" id="menu-btn"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><div class="sidebar-toggle sidebar-overlay"></div><aside class="sidebar"><script defer src="/js/sidebar.js"></script><ul class="sidebar-nav"><li class="sidebar-nav-item sidebar-nav-toc hty-icon-button sidebar-nav-active" data-target="post-toc-wrap" title="文章目录"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-list-ordered"></use></svg></li><li class="sidebar-nav-item sidebar-nav-overview hty-icon-button" data-target="site-overview-wrap" title="站点概览"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-passport-line"></use></svg></li></ul><div class="sidebar-panel" id="site-overview-wrap"><div class="site-info mickey-mouse"><a class="site-author-avatar" href="/about/" title="Beigui"><img width="96" loading="lazy" src="/yun.png" alt="Beigui"></a><div class="site-author-name"><a href="/about/">Beigui</a></div><a class="site-name" href="/about/site.html">beigui blog</a><sub class="site-subtitle">Network security enthusiasts | CTFer</sub><div class="site-desciption"></div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/" title="首页"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-home-4-line"></use></svg></span></a><div class="site-state-item"><a href="/archives/" title="归档"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-archive-line"></use></svg></span><span class="site-state-item-count">16</span></a></div><div class="site-state-item"><a href="/categories/" title="分类"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-folder-2-line"></use></svg></span><span class="site-state-item-count">0</span></a></div><div class="site-state-item"><a href="/tags/" title="标签"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="site-state-item-count">9</span></a></div><a class="site-state-item hty-icon-button" href="https://yun.yunyoujun.cn" target="_blank" rel="noopener" title="文档"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-settings-line"></use></svg></span></a></nav><hr style="margin-bottom:0.5rem"><div class="links-of-author"><a class="links-of-author-item hty-icon-button" rel="noopener" href="/atom.xml" title="RSS" target="_blank" style="color:orange"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-rss-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="http://wpa.qq.com/msgrd?v=3&amp;uin=1769606485&amp;site=qq&amp;menu=yes" title="QQ" target="_blank" style="color:#12B7F5"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-qq-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://github.com/bei-gui" title="GitHub" target="_blank" style="color:#6e5494"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-github-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://music.163.com/#/user/home?id=1539583733" title="网易云音乐" target="_blank" style="color:#C20C0C"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-netease-cloud-music-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://space.bilibili.com/479406079" title="哔哩哔哩" target="_blank" style="color:#FF8EB3"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-bilibili-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="1769606485@qq.com" title="E-Mailqq.com" target="_blank" style="color:#8E71C1"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-mail-line"></use></svg></a></div><hr style="margin:0.5rem 1rem"><div class="links"><a class="links-item hty-icon-button" href="/links/" title="我的小伙伴们" style="color:dodgerblue"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-genderless-line"></use></svg></a></div><br><a class="links-item hty-icon-button" id="toggle-mode-btn" href="javascript:;" title="Mode" style="color: #f1cb64"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-contrast-2-line"></use></svg></a></div><div class="sidebar-panel sidebar-panel-active" id="post-toc-wrap"><div class="post-toc"><div class="post-toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Crypto"><span class="toc-number">1.</span> <span class="toc-text">Crypto</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#签到题"><span class="toc-number">1.1.</span> <span class="toc-text">签到题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#rsa256"><span class="toc-number">1.2.</span> <span class="toc-text">rsa256</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Misc"><span class="toc-number">2.</span> <span class="toc-text">Misc</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#very-ez-dump"><span class="toc-number">2.1.</span> <span class="toc-text">very-ez-dump</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#！了反都，了反"><span class="toc-number">2.2.</span> <span class="toc-text">！了反都，了反</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#web"><span class="toc-number">3.</span> <span class="toc-text">web</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#easy-web"><span class="toc-number">3.1.</span> <span class="toc-text">easy_web</span></a></li></ol></li></ol></div></div></div></aside><main class="sidebar-translate" id="content"><div id="post"><article class="post-block" itemscope itemtype="https://schema.org/Article"><link itemprop="mainEntityOfPage" href="http://beigui.xyz/2021/06/07/newctf/"><span hidden itemprop="author" itemscope itemtype="https://schema.org/Person"><meta itemprop="name" content="Beigui"><meta itemprop="description"></span><span hidden itemprop="publisher" itemscope itemtype="https://schema.org/Organization"><meta itemprop="name" content="beigui blog"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">第二届newctf部分WP</h1><div class="post-meta"><div class="post-time" style="display:block"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-line"></use></svg></span> <time title="创建时间：2021-06-07 11:29:05" itemprop="dateCreated datePublished" datetime="2021-06-07T11:29:05+08:00">2021-06-07</time></div><span class="post-count"><span class="post-symbolcount"><span class="post-meta-item-icon" title="本文字数"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-file-word-line"></use></svg></span> <span title="本文字数">15k</span><span class="post-meta-divider">-</span><span class="post-meta-item-icon" title="阅读时长"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-timer-line"></use></svg></span> <span title="阅读时长">28 分钟</span></span></span><span class="post-busuanzi"><span class="post-meta-divider">-</span><span class="post-meta-item-icon" title="阅读次数"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-eye-line"></use></svg> <span id="busuanzi_value_page_pv"></span></span></span><div class="post-classify"><span class="post-tag"><a class="tag" href="/tags/ctf/" style="--text-color:var(--hty-text-color)"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="tag-name">ctf</span></a></span></div></div></header><section class="post-body" itemprop="articleBody"><div class="post-content post-markdown"><p>上周带学弟参加了一个民间比赛，本来比赛介绍是“萌新“赛，我就准备让学弟试试手，结果呀我就 不该相信CTF的萌新字眼，学弟看到题目一脸懵逼，于是我也注册账号参加比赛，结果看到题目确实是非常”萌新“，让我自己都感觉自己还是一个萌新，明明是萌新赛结果大佬云集，肝到最后才一百多名，虽然群主说本次比赛有一千多人参加，一百多名属于前列了，但还是感觉自己是一个小菜鸡（PS：如果自己做题快的话，可能我就有贴纸了😢）,下面小菜鸡就把做出的题目的WP写下来记录一下吧！</p>
+<p><img src="https://gitee.com/bei-gui/picture_bed/raw/master/img/image-20210607115058354.png" alt="image-20210607115058354" loading="lazy"></p>
+<a id="more"></a>
+
+<blockquote>
+<h2 id="Crypto"><a href="#Crypto" class="headerlink" title="Crypto"></a>Crypto</h2></blockquote>
+<h3 id="签到题"><a href="#签到题" class="headerlink" title="签到题"></a>签到题</h3><p>下载flag.txt,打开看到下列字符，%3D换成=，就可以很简单看出这是一串base64字符</p>
+<pre class=" language-basic"><code class="language-basic">NTQ1NjcwNTg1MjMwNGU2MTRkN2E0ZTUwNTQ2YzU2NTg1NDdhNGU1NDRlMzAzNTQ3NTc0NTU5MzI0ZTQ2NTI0YjU0NTQ1NjU2NTM0NTZiMzM1MzU0MzAzZA%<span class="token number">3</span>D%<span class="token number">3</span>D</code></pre>
+<p>将base64解密，是一串十六进制字符串，将十六进制转换为ascii码之后</p>
+<pre class=" language-basic"><code class="language-basic"><span class="token number">5456705852304e614</span>d7a4e50546c5658547a4e544e303547574559324e46524b5454565653456b335354303d</code></pre>
+<pre class=" language-basic"><code class="language-basic">TVpXR0NaMzNPTlVXTzNTN05GWEY2NFRKTTVVSEk3ST0<span class="token operator">=</span></code></pre>
+<p>再进行一次base64解码和一次base32结果得到flag(PS:套神的WP写起来都这么套😒)</p>
+<pre class=" language-basic"><code class="language-basic">flag{sign_in_right}</code></pre>
+<h3 id="rsa256"><a href="#rsa256" class="headerlink" title="rsa256"></a>rsa256</h3><p>这题是i春秋欢乐赛原题，直接贴链接</p>
+<p><a href="https://blog.csdn.net/hanjinrui15/article/details/102017927" target="_blank" rel="noopener">(15条消息) i春秋第二届春秋欢乐赛RSA256writeup_hanjinrui15的博客-CSDN博客</a></p>
+<blockquote>
+<h2 id="Misc"><a href="#Misc" class="headerlink" title="Misc"></a>Misc</h2></blockquote>
+<h3 id="very-ez-dump"><a href="#very-ez-dump" class="headerlink" title="very-ez-dump"></a>very-ez-dump</h3><p>下载下来是一个明叫mem.raw的文件这里使用kali来解决问题需要用到的工具是volatility工具</p>
+<p>先吧镜像移动到kali里边，然后打开volatility，执行命令查看镜像系统</p>
+<pre class=" language-bash"><code class="language-bash">volatility -f <span class="token string">'/root/桌面/mem.raw'</span> imageinfo</code></pre>
+<p><img src="https://gitee.com/bei-gui/picture_bed/raw/master/img/image-20210607201358317.png" alt="image-20210607201358317" loading="lazy"></p>
+<p>可以看到我们要看的系统是 win7SP1x64</p>
+<p>然后执行</p>
+<pre class=" language-bash"><code class="language-bash">volatility -f <span class="token string">'/root/桌面/mem.raw'</span>  --profile<span class="token operator">=</span>Win7SP1x64 cmdscan</code></pre>
+<p>来查看cmd命令使用的情况</p>
+<p><img src="https://gitee.com/bei-gui/picture_bed/raw/master/img/clip_image002.jpg" alt="img" loading="lazy"></p>
+<p>可以看到#7的是密码然后扫描这个镜像里面的文件执行</p>
+<pre class=" language-bash"><code class="language-bash">volatility -f <span class="token string">'/root/桌面/mem.raw'</span>  --profile<span class="token operator">=</span>Win7SP1x64 filescan <span class="token operator">|</span> <span class="token function">grep</span> <span class="token function">zip</span></code></pre>
+<p>，可以看到一个后缀是zip的flag文件</p>
+<p>提取这个文件执行</p>
+<pre class=" language-bash"><code class="language-bash">volatility -f <span class="token string">'/root/桌面/mem.raw'</span>  --profile<span class="token operator">=</span>Win7SP1x64 dumpfiles -Q 0x000000003e4b2070 --dump-dir<span class="token operator">=</span>./</code></pre>
+<p>可以提取到桌面上， 把压缩包移动到Windows上解压，密码就是 （ljmmz）ovo就可以看到一个txt打开就可以看到flag</p>
+<h3 id="！了反都，了反"><a href="#！了反都，了反" class="headerlink" title="！了反都，了反"></a>！了反都，了反</h3><p>下载下来是一个<strong>piz,flag</strong>文件，根据题目描述我们将文件名字倒过来，就是<strong>flag.zip</strong>打开压缩包看到一个流量包文件，使用<strong>wireshark</strong>打开，进行流量分析，可以看到这个流量包捕获的流量是访问网站的流量，我们进行http过滤</p>
+<p><img src="https://gitee.com/bei-gui/picture_bed/raw/master/img/image-20210607203403834.png" alt="image-20210607203403834" loading="lazy"></p>
+<p>根据题目描述进行字符串搜索，多次尝试后发现下载了一个后缀为piz的文件，我们将其数据导出来，发现无法解压，根据题目描述和十六进制信息，发现需要将十六进制信息前后顺序颠倒，直接用代码（PS：赛后看官方WP其实有更简单的脚本）</p>
+<pre class=" language-python"><code class="language-python"><span class="token keyword">import</span> re
+
+data <span class="token operator">=</span> <span class="token triple-quoted-string string">''' '''</span>    <span class="token comment" spellcheck="true">#存放十六进制数据</span>
+list1 <span class="token operator">=</span> data<span class="token punctuation">.</span>split<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token comment" spellcheck="true">#以空格分裂</span>
+
+list1 <span class="token operator">=</span> reversed<span class="token punctuation">(</span>list1<span class="token punctuation">)</span> <span class="token comment" spellcheck="true">#逆转list</span>
+
+a <span class="token operator">=</span> <span class="token string">' '</span><span class="token punctuation">.</span>join<span class="token punctuation">(</span>list1<span class="token punctuation">)</span> <span class="token comment" spellcheck="true">#list 拼接为句子</span>
+
+<span class="token keyword">print</span> <span class="token punctuation">(</span>a<span class="token punctuation">)</span></code></pre>
+<p>修改后的压缩包存放着flag.txt但是存在密码，压缩包提示当中注释解压密码是登录账号，查看流量包发现登录成功的密码是passwd123</p>
+<p><img src="https://gitee.com/bei-gui/picture_bed/raw/master/img/image-20210607204143471.png" alt="image-20210607204143471" loading="lazy"></p>
+<p>解压后的文件是很多行的base64数据，这里想到base64解密，上脚本</p>
+<p>\</p>
+<pre class=" language-python"><code class="language-python"><span class="token comment" spellcheck="true"># base64隐写</span>
+
+<span class="token keyword">import</span> base64
+
+<span class="token keyword">def</span> <span class="token function">get_diff</span><span class="token punctuation">(</span>s1<span class="token punctuation">,</span> s2<span class="token punctuation">)</span><span class="token punctuation">:</span>
+
+  base64chars <span class="token operator">=</span> <span class="token string">'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'</span>
+
+  res <span class="token operator">=</span> <span class="token number">0</span>
+
+  <span class="token keyword">for</span> i <span class="token keyword">in</span> range<span class="token punctuation">(</span>len<span class="token punctuation">(</span>s2<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+
+​    <span class="token keyword">if</span> s1<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">!=</span> s2<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">:</span>
+
+​      <span class="token keyword">return</span> abs<span class="token punctuation">(</span>base64chars<span class="token punctuation">.</span>index<span class="token punctuation">(</span>s1<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token operator">-</span> base64chars<span class="token punctuation">.</span>index<span class="token punctuation">(</span>s2<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+  <span class="token keyword">return</span> res
+
+<span class="token keyword">def</span> <span class="token function">b64_stego_decode</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+
+  file <span class="token operator">=</span> open<span class="token punctuation">(</span><span class="token string">"zheng.txt"</span><span class="token punctuation">,</span><span class="token string">"rb"</span><span class="token punctuation">)</span>
+
+  x <span class="token operator">=</span> <span class="token string">''</span>                   <span class="token comment" spellcheck="true"># x即bin_str</span>
+
+  lines <span class="token operator">=</span> file<span class="token punctuation">.</span>readlines<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+  <span class="token keyword">for</span> line <span class="token keyword">in</span> lines<span class="token punctuation">:</span>
+
+​    l <span class="token operator">=</span> str<span class="token punctuation">(</span>line<span class="token punctuation">,</span> encoding <span class="token operator">=</span> <span class="token string">"utf-8"</span><span class="token punctuation">)</span>
+
+​    stego <span class="token operator">=</span> l<span class="token punctuation">.</span>replace<span class="token punctuation">(</span><span class="token string">'\n'</span><span class="token punctuation">,</span><span class="token string">''</span><span class="token punctuation">)</span>
+
+​    \#<span class="token keyword">print</span><span class="token punctuation">(</span>stego<span class="token punctuation">)</span>
+
+​    realtext <span class="token operator">=</span> base64<span class="token punctuation">.</span>b64decode<span class="token punctuation">(</span>l<span class="token punctuation">)</span>
+
+​    \#<span class="token keyword">print</span><span class="token punctuation">(</span>realtext<span class="token punctuation">)</span>
+
+​    realtext <span class="token operator">=</span> str<span class="token punctuation">(</span>base64<span class="token punctuation">.</span>b64encode<span class="token punctuation">(</span>realtext<span class="token punctuation">)</span><span class="token punctuation">,</span>encoding <span class="token operator">=</span> <span class="token string">"utf-8"</span><span class="token punctuation">)</span>
+
+​    \#<span class="token keyword">print</span><span class="token punctuation">(</span>realtext<span class="token punctuation">)</span>
+
+​    diff <span class="token operator">=</span> get_diff<span class="token punctuation">(</span>stego<span class="token punctuation">,</span> realtext<span class="token punctuation">)</span>    <span class="token comment" spellcheck="true"># diff为隐写字串与实际字串的二进制差值</span>
+
+​    n <span class="token operator">=</span> stego<span class="token punctuation">.</span>count<span class="token punctuation">(</span><span class="token string">'='</span><span class="token punctuation">)</span>
+
+​    <span class="token keyword">if</span> diff<span class="token punctuation">:</span>
+
+​      x <span class="token operator">+=</span> bin<span class="token punctuation">(</span>diff<span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">:</span><span class="token punctuation">]</span><span class="token punctuation">.</span>zfill<span class="token punctuation">(</span>n<span class="token operator">*</span><span class="token number">2</span><span class="token punctuation">)</span>
+
+​    <span class="token keyword">else</span><span class="token punctuation">:</span>
+
+​      x <span class="token operator">+=</span> <span class="token string">'0'</span> <span class="token operator">*</span> n<span class="token operator">*</span><span class="token number">2</span>
+
+​      
+
+  i <span class="token operator">=</span> <span class="token number">0</span>
+
+  flag <span class="token operator">=</span> <span class="token string">''</span>
+
+  <span class="token keyword">while</span> i <span class="token operator">&lt;</span> len<span class="token punctuation">(</span>x<span class="token punctuation">)</span><span class="token punctuation">:</span>
+
+​    <span class="token keyword">if</span> int<span class="token punctuation">(</span>x<span class="token punctuation">[</span>i<span class="token punctuation">:</span>i<span class="token operator">+</span><span class="token number">8</span><span class="token punctuation">]</span><span class="token punctuation">,</span><span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+
+​      flag <span class="token operator">+=</span> chr<span class="token punctuation">(</span>int<span class="token punctuation">(</span>x<span class="token punctuation">[</span>i<span class="token punctuation">:</span>i<span class="token operator">+</span><span class="token number">8</span><span class="token punctuation">]</span><span class="token punctuation">,</span><span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+​    i <span class="token operator">+=</span> <span class="token number">8</span>
+
+  <span class="token keyword">print</span><span class="token punctuation">(</span>flag<span class="token punctuation">)</span>
+
+<span class="token keyword">if</span> __name__ <span class="token operator">==</span> <span class="token string">'__main__'</span><span class="token punctuation">:</span>
+
+  b64_stego_decode<span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+<p>flag</p>
+<pre class=" language-zifu"><code class="language-zifu">flag{cfcd208495d565ef66e7dff9f98764da}</code></pre>
+<blockquote>
+<h2 id="web"><a href="#web" class="headerlink" title="web"></a>web</h2></blockquote>
+<h3 id="easy-web"><a href="#easy-web" class="headerlink" title="easy_web"></a>easy_web</h3><p><img src="https://gitee.com/bei-gui/picture_bed/raw/master/img/image-20210607204831665.png" alt="image-20210607204831665" loading="lazy"></p>
+<p>通过这些代码我们获取到的信息是</p>
+<p>1.POST传参2.强类型</p>
+<p>满足这些内容我们就可以进行下一步了</p>
+<p><strong>{e10adc3949ba59abbe56e057f20f883e}</strong><br>通过代码我们可以看出这串字符是运用了MD5进行加密处理，我们运用MD5进行解码得到<code>｛123456｝
+代码中可以看出array是溢出+1我们通过查询得出溢出值</code>9223372036854775807<br>那么我所用到的数是<code>9223372036854775807-1</code>就是``9223372036854775806</p>
+<p>POST传参我们运用到一款工具HackBar</p>
+<p>首先题目告诉我们</p>
+<pre class=" language-php"><code class="language-php"><span class="token function">md5</span><span class="token punctuation">(</span><span class="token variable">$a</span><span class="token punctuation">)</span> <span class="token operator">===</span> <span class="token function">md5</span><span class="token punctuation">(</span><span class="token variable">$b</span><span class="token punctuation">)</span> `<span class="token operator">&amp;&amp;</span> ``<span class="token variable">$a</span> ``<span class="token operator">!==</span> ``<span class="token variable">$b</span>`</code></pre>
+<p>我们上传md5($a)和md5($b)的值相等但是<code>$a``不等于``$b</code></p>
+<p>那么我们可以</p>
+<p><img src="https://gitee.com/bei-gui/picture_bed/raw/master/img/image-20210607205008003.png" alt="image-20210607205008003" loading="lazy"></p>
+<p>根据题目描述<strong>hint:这个图片真好看呀，没啥隐藏的东西吧</strong>以及给出的背景图片我们下载背景图，使用binwalk分离出一个压缩包，根据web题解出的压缩包密码，解压得到flag</p>
+<pre class=" language-zifu"><code class="language-zifu">newsctf{this_1s_veryveryveryeasyweb}</code></pre>
+</div><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>Beigui</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="http://beigui.xyz/2021/06/07/newctf/" title="第二届newctf部分WP">http://beigui.xyz/2021/06/07/newctf/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 "><svg class="icon"><use xlink:href="#icon-creative-commons-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-by-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-nc-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-sa-line"></use></svg></a> 许可协议。</li></ul></section></article><div class="post-nav"><div class="post-nav-item"></div><div class="post-nav-item"><a class="post-nav-next" href="/2021/05/11/ubuntu/" rel="next" title="一个闪闪发光的Linux to go诞生记"><span class="post-nav-text">一个闪闪发光的Linux to go诞生记</span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-right-s-line"></use></svg></a></div></div></div><div id="comment"><div class="comment-tooltip text-center"><span>点击按钮跳转 GitHub Issues 评论。</span><br><span>若没有本文 Issue，您可以使用 Comment 模版新建。</span><br><a class="hty-button hty-button--raised" id="github-issues" href="https://github.com/bei-gui/bei-gui.github.io/issues?q=is:issue+第二届newctf部分WP" target="_blank" rel="noopener">GitHub Issues</a></div><div id="valine-container"></div><script src="https://cdn.jsdelivr.net/npm/valine@latest/dist/Valine.min.js"></script><script>function initValine() {
+  const valineConfig = {"enable":"ture","appId":"wHVOT6bFIaTwme3n6GGgStyK-gzGzoHsz","appKey":"yxIzvqfCcaUqAKxJX1nMhM28","placeholder":"（欢迎大家留言，备注邮箱我回复有提示）","avatar":null,"pageSize":10,"visitor":false,"highlight":false,"recordIP":false,"enableQQ":true,"el":"#valine-container","lang":"zh-cn"}
+  valineConfig.path = window.location.pathname
+  new Valine(valineConfig)
+}
+setTimeout(initValine, 1000)</script></div></main><footer class="sidebar-translate" id="footer"><div class="beian"><a rel="noopener" href="http://www.beian.miit.gov.cn" target="_blank">鲁ICP备20027958号</a></div><div class="copyright"><span>&copy; 2019 – 2021 </span><span class="with-love" id="animate"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-cloud-line"></use></svg></span><span class="author"> Beigui</span></div><div class="live_time"><span>本博客已萌萌哒地运行</span><span id="display_live_time"></span><span class="moe-text">(●'◡'●)</span><script>function blog_live_time() {
+  window.setTimeout(blog_live_time, 1000);
+  const start = new Date('2020-06-26T00:00:00');
+  const now = new Date();
+  const timeDiff = (now.getTime() - start.getTime());
+  const msPerMinute = 60 * 1000;
+  const msPerHour = 60 * msPerMinute;
+  const msPerDay = 24 * msPerHour;
+  const passDay = Math.floor(timeDiff / msPerDay);
+  const passHour = Math.floor((timeDiff % msPerDay) / 60 / 60 / 1000);
+  const passMinute = Math.floor((timeDiff % msPerHour) / 60 / 1000);
+  const passSecond = Math.floor((timeDiff % msPerMinute) / 1000);
+  display_live_time.innerHTML = " " + passDay + " 天 " + passHour + " 小时 " + passMinute + " 分 " + passSecond + " 秒";
+}
+blog_live_time();
+</script></div><div id="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_site_uv" title="总访客量"><span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-user-line"></use></svg></span><span id="busuanzi_value_site_uv"></span></span><span class="footer-separator">|</span><span id="busuanzi_container_site_pv" title="总访问量"><span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-eye-line"></use></svg></span><span id="busuanzi_value_site_pv"></span></span></div></footer><a class="hty-icon-button" id="goUp" aria-label="back-to-top" href="#"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-up-s-line"></use></svg><svg class="progress-circle-container" viewBox="0 0 100 100"><circle class="progress-circle" id="progressCircle" cx="50" cy="50" r="48" fill="none" stroke="#0078E7" stroke-width="2" stroke-linecap="round"></circle></svg></a></div><script defer src="/js/utils.js"></script><script defer src="/js/hexo-theme-yun.js"></script></body></html>
