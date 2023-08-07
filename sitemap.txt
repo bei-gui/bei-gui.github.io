@@ -1,3 +1,4 @@
+http://www.beigui.xyz/2023/08/07/CVE-2021-44228/
 http://www.beigui.xyz/2022/06/15/windows-blue-Team/
 http://www.beigui.xyz/2022/06/17/vulnhub-DC2/
 http://www.beigui.xyz/2022/06/16/vulnhub-DC1/
